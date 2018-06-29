@@ -38,16 +38,16 @@ class Products_model extends CI_Model
 	// }
 	
 	function request_order_number(){
-		if(date('H')>=0 AND date('H')<=4){
-			$date_today = date('Y-m-d', strtotime(date('Y-m-d') .' -1 day'));
-		}else{
-			$date_today = $date('Y-m-d');
-			#$date_today = $date('Y-m-d');
-		}
-		// $date_today = date('Y-m-d');
+		// if(date('H')>=0 AND date('H')<=4){
+			// $date_today = date('Y-m-d', strtotime(date('Y-m-d') .' -1 day'));
+		// }else{
+			// $date_today = $date('Y-m-d');
+			// #$date_today = $date('Y-m-d');
+		// }
+		$date_today = date('Y-m-d');
 		
-		// $query = "SELECT order_number FROM order_number WHERE order_date='".$date_today."'";
-		// $row = $this->db->query($query)->row();
+		$query = "SELECT order_number FROM order_number WHERE order_date='".$date_today."'";
+		$row = $this->db->query($query)->row();
 		
 		if(empty($row)){#empty
 			$insert_data = array(
@@ -71,13 +71,6 @@ class Products_model extends CI_Model
 			$this->db->query($query);
 			
 			return $row->order_number;
-		}
-		
-		if (empty($row)) {
-			return '1'; //start of a new day's order number which is 1
-		}
-		else {
-			return $row->order_number+1;
 		}
 	}
 	
