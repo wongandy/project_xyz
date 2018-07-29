@@ -20,57 +20,66 @@ class Products_model extends CI_Model
 		return $row->order_number;
 	}
 	
-	// function update_order_number($order_no = '') {
-		// $date_today = date('Y-m-d');
-		// $insert_data = array(
-			// 'order_date' => $date_today,
-			// 'order_number' => $order_no
-		// );
+	function update_order_number($order_no = '') {
+		$date_today = date('Y-m-d');
+		$insert_data = array(
+			'order_date' => $date_today,
+			'order_number' => $order_no
+		);
 		
-		// if($order_no == '1'){
+		if($order_no == '1'){
+			$this->db->insert("order_number", $insert_data);
+		}
+		else{
+			$query = "UPDATE order_number SET order_number=order_number+1 WHERE order_date='".$date_today."'";
+			$this->db->query($query);
+		}
+		
+	}
+	
+	// function request_order_number(){
+		// $date_today = date('Y-m-d');
+		
+		// $query = "SELECT order_number FROM order_number WHERE order_date='".$date_today."'";
+		// $row = $this->db->query($query)->row();
+		
+		// if(empty($row)){#empty
+			// $insert_data = array(
+				// 'order_date' => $date_today,
+				// 'order_number' => 1
+			// );
 			// $this->db->insert("order_number", $insert_data);
-		// }
-		// else{
+			
+			// $query = "SELECT order_number FROM order_number WHERE order_date='".$date_today."'";
+			// $row = $this->db->query($query)->row();
+			
 			// $query = "UPDATE order_number SET order_number=order_number+1 WHERE order_date='".$date_today."'";
 			// $this->db->query($query);
+			
+			// return $row->order_number;
+		// }else{#not empty
+			// $query = "SELECT order_number FROM order_number WHERE order_date='".$date_today."'";
+			// $row = $this->db->query($query)->row();
+			
+			// $query = "UPDATE order_number SET order_number=order_number+1 WHERE order_date='".$date_today."'";
+			// $this->db->query($query);
+			
+			// return $row->order_number;
 		// }
-		
 	// }
 	
 	function request_order_number(){
-		// if(date('H')>=0 AND date('H')<=4){
-			// $date_today = date('Y-m-d', strtotime(date('Y-m-d') .' -1 day'));
-		// }else{
-			// $date_today = $date('Y-m-d');
-			// #$date_today = $date('Y-m-d');
-		// }
 		$date_today = date('Y-m-d');
 		
 		$query = "SELECT order_number FROM order_number WHERE order_date='".$date_today."'";
 		$row = $this->db->query($query)->row();
 		
 		if(empty($row)){#empty
-			$insert_data = array(
-				'order_date' => $date_today,
-				'order_number' => 1
-			);
-			$this->db->insert("order_number", $insert_data);
-			
-			$query = "SELECT order_number FROM order_number WHERE order_date='".$date_today."'";
-			$row = $this->db->query($query)->row();
-			
-			$query = "UPDATE order_number SET order_number=order_number+1 WHERE order_date='".$date_today."'";
-			$this->db->query($query);
-			
-			return $row->order_number;
+			return 1;
 		}else{#not empty
 			$query = "SELECT order_number FROM order_number WHERE order_date='".$date_today."'";
 			$row = $this->db->query($query)->row();
-			
-			$query = "UPDATE order_number SET order_number=order_number+1 WHERE order_date='".$date_today."'";
-			$this->db->query($query);
-			
-			return $row->order_number;
+			return $row->order_number + 1;
 		}
 	}
 	

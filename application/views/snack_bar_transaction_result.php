@@ -1,6 +1,7 @@
 <table class="table" id="mrt-result-table">
 	<thead>
 	<tr>
+		<th></th>
 		<th>Order No</th>
 		<th>Order Type</th>
 		<th>Datetime Created</th>

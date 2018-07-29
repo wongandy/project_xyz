@@ -1152,7 +1152,7 @@
 		
 		<!-------------------------SNACKS BAR FORM----------------------------->
 	var search_form = '';
-	<?php if($this->session->userdata('role')==1 OR $this->session->userdata('role')==2): ?>
+	<?php //if($this->session->userdata('role')==1 OR $this->session->userdata('role')==2): ?>
 		var search_form = '\
 			<div class="row">\
 				<div class="col-lg-2">\
@@ -1166,7 +1166,7 @@
 				</div>\
 			</div><br>\
 		';
-	<?php endif; ?>
+	<?php //endif; ?>
 	var cart_items = 1;
 		$(document).on("click","#snacks-bar-window",function(){
 			$("body").mLoading();

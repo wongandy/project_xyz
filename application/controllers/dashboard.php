@@ -694,31 +694,34 @@ class Dashboard extends CI_Controller {
 		
 		if(empty($order_header)){
 		
-		$insert_data = array(
-			'order_no' => $order_no,
-			'order_type' => $order_type,
-			'room' => $room,
-			'total' => $total,
-			'money' => $money,
-			'money_change' => $money_change,
-			'paid' => $paid,
-			'datetime_created' => date('Y-m-d H:i:s'),
-			'created_by' => $this->session->userdata('username'),
-			'created_by_id' => $this->session->userdata('user_id')
-		);
-		
-		if($this->snacks_bar_transaction->insert_transaction_header($insert_data)){
-			if($this->snacks_bar_transaction->insert_transaction_detail($order_no)){
-				$result['error'] = 0;
-				$result['message'] = 'Snack bar check out transactions successfull.';
+			$insert_data = array(
+				'order_no' => $order_no,
+				'order_type' => $order_type,
+				'room' => $room,
+				'total' => $total,
+				'money' => $money,
+				'money_change' => $money_change,
+				'paid' => $paid,
+				'datetime_created' => date('Y-m-d H:i:s'),
+				'created_by' => $this->session->userdata('username'),
+				'created_by_id' => $this->session->userdata('user_id')
+			);
+			
+			if($this->snacks_bar_transaction->insert_transaction_header($insert_data)){
+				if($this->snacks_bar_transaction->insert_transaction_detail($order_no)){
+					$result['error'] = 0;
+					$result['message'] = 'Snack bar check out transactions successfull.';
+				}else{
+					$result['error'] = 1;
+					$result['message'] = 'Detail snacks bar transaction failed.';
+				}
 			}else{
 				$result['error'] = 1;
-				$result['message'] = 'Detail snacks bar transaction failed.';
+				$result['message'] = 'Header snacks bar transaction failed.';
 			}
-		}else{
-			$result['error'] = 1;
-			$result['message'] = 'Header snacks bar transaction failed.';
-		}
+			
+			// update the order order after customer has purchased from snackbar
+			$this->products->update_order_number($order_no);
 		
 		}else{
 			$update_data = array(
@@ -823,103 +826,185 @@ class Dashboard extends CI_Controller {
 				';
 			}
 			
-			$html_draw = '
-			<div class="order_no_search_form row">
-				<div class="col-lg-2">
-					<label>Type :</label>
-				</div>
-				<div class="col-lg-4">
-					<input class="form-control" value="'.$order_header->order_type.'" readonly/>
-				</div>
-			</div>
-			<div class="order_no_search_form row">
-				<div class="col-lg-12">
-					<table class="table" id="add-to-cart-table">
-						<thead>
-						<tr>
-							<th>Product</th>
-							<th>Price</th>
-							<th>Quantity</th>
-							<th>Subtotal</th>
-						</tr>
-						</thead>
-						<tbody>
-							'.$order_detail_view.'
-						</tbody>
-					</table>
-				</div>
-			</div>
-			<div class="order_no_search_form row">
-				<div class="col-lg-1">
-					<button type="button" class="money-button111 btn btn-default" amount="1">1</button>
-				</div>
-				<div class="col-lg-1">
-					<button type="button" class="money-button111 btn btn-default" amount="5">5</button>
-				</div>
-				<div class="col-lg-1">
-					<button type="button" class="money-button111 btn btn-default" amount="10">10</button>
-				</div>
-				<div class="col-lg-1">
-					<button type="button" class="money-button111 btn btn-default" amount="20">20</button>
-				</div>
-				<div class="col-lg-1">
-					<button type="button" class="money-button111 btn btn-default" amount="50">50</button>
-				</div>
-				<div class="col-lg-1">
-					<button type="button" class="money-button111 btn btn-default" amount="100">100</button>
-				</div>
-				<div class="col-lg-2">
-					<label>Total :</label>
-				</div>
-				<div class="col-lg-4">
-					<input class="form-control" name="total" id="snacks-total" value="'.$order_header->total.'" readonly>
-				</div>
-				</div>
-			</div>
-			<div class="order_no_search_form row">
-				<div class="col-lg-1">
-					<button type="button" class="money-button111 btn btn-default" amount="200">200</button>
-				</div>
-				<div class="col-lg-1">
-					<button type="button" class="money-button111 btn btn-default" amount="500">500</button>
-				</div>
-				<div class="col-lg-2">
-					<button type="button" class="money-button111 btn btn-default" amount="1000">1000</button>
-				</div>
-				<div class="col-lg-2">
-					<button type="button" class="money-button111 btn btn-warning" amount="0">Reset</button>
-				</div>
-				<div class="col-lg-2">
-					<label>Money :</label>
-				</div>
-				<div class="col-lg-4">
-					<input class="form-control" name="snacks_money" id="snacks_money" onClick="this.select();" value="'.$order_header->money.'" readonly>
-				</div>
-			</div>
-			<div class="order_no_search_form row">
-				<div class="col-lg-6">
-					<div class="form-group">
+			// if order type is room then it displays room number
+			$order_type = ($order_header->room != 0) ? $order_header->order_type . ' ' . $order_header->room : $order_header->order_type;
+			
+			// filter user role as snackbar role has different UI than other roles
+			if($this->session->userdata('role')!=3) {
+				$html_draw = '
+				<div class="order_no_search_form row">
+					<div class="col-lg-2">
+						<label>Type :</label>
+					</div>
+					<div class="col-lg-4">
+						<input class="form-control" value="'.$order_type . '" readonly/>
 					</div>
 				</div>
-				<div class="col-lg-2">
-					<label>Change :</label>
-				</div>
-				<div class="col-lg-4">
-					<input class="form-control" name="change" id="snacks-change" value="'.$order_header->money_change.'" readonly>
-				</div>
-			</div><br>
-			<div class="order_no_search_form row">
-				<div class="col-lg-6">
-					<div class="form-group">
+				<div class="order_no_search_form row">
+					<div class="col-lg-12">
+						<table class="table" id="add-to-cart-table">
+							<thead>
+							<tr>
+								<th>Product</th>
+								<th>Price</th>
+								<th>Quantity</th>
+								<th>Subtotal</th>
+							</tr>
+							</thead>
+							<tbody>
+								'.$order_detail_view.'
+							</tbody>
+						</table>
 					</div>
 				</div>
-				<div class="col-lg-6">
-					<input type="hidden" id="update_order_no" name="update_order_no" value="'.$order_no.'"/>
-					<button type="submit" class="btn btn-success">Check-Out</button>
-					<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+				<div class="order_no_search_form row">
+					<div class="col-lg-1">
+						<button type="button" class="money-button111 btn btn-default" amount="1">1</button>
+					</div>
+					<div class="col-lg-1">
+						<button type="button" class="money-button111 btn btn-default" amount="5">5</button>
+					</div>
+					<div class="col-lg-1">
+						<button type="button" class="money-button111 btn btn-default" amount="10">10</button>
+					</div>
+					<div class="col-lg-1">
+						<button type="button" class="money-button111 btn btn-default" amount="20">20</button>
+					</div>
+					<div class="col-lg-1">
+						<button type="button" class="money-button111 btn btn-default" amount="50">50</button>
+					</div>
+					<div class="col-lg-1">
+						<button type="button" class="money-button111 btn btn-default" amount="100">100</button>
+					</div>
+					<div class="col-lg-2">
+						<label>Total :</label>
+					</div>
+					<div class="col-lg-4">
+						<input class="form-control" name="total" id="snacks-total" value="'.$order_header->total.'" readonly>
+					</div>
+					</div>
 				</div>
-			</div>
-			';
+				<div class="order_no_search_form row">
+					<div class="col-lg-1">
+						<button type="button" class="money-button111 btn btn-default" amount="200">200</button>
+					</div>
+					<div class="col-lg-1">
+						<button type="button" class="money-button111 btn btn-default" amount="500">500</button>
+					</div>
+					<div class="col-lg-2">
+						<button type="button" class="money-button111 btn btn-default" amount="1000">1000</button>
+					</div>
+					<div class="col-lg-2">
+						<button type="button" class="money-button111 btn btn-warning" amount="0">Reset</button>
+					</div>
+					<div class="col-lg-2">
+						<label>Money :</label>
+					</div>
+					<div class="col-lg-4">
+						<input class="form-control" name="snacks_money" id="snacks_money" onClick="this.select();" value="'.$order_header->money.'" readonly>
+					</div>
+				</div>
+				<div class="order_no_search_form row">
+					<div class="col-lg-6">
+						<div class="form-group">
+						</div>
+					</div>
+					<div class="col-lg-2">
+						<label>Change :</label>
+					</div>
+					<div class="col-lg-4">
+						<input class="form-control" name="change" id="snacks-change" value="'.$order_header->money_change.'" readonly>
+					</div>
+				</div><br>
+				<div class="order_no_search_form row">
+					<div class="col-lg-6">
+						<div class="form-group">
+						</div>
+					</div>
+					<div class="col-lg-6">
+						<input type="hidden" id="update_order_no" name="update_order_no" value="'.$order_no.'"/>
+						<button type="submit" class="btn btn-success">Check-Out</button>
+						<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+					</div>
+				</div>
+				';
+			}
+			else {
+				$html_draw = '
+				<div class="order_no_search_form row">
+					<div class="col-lg-2">
+						<label>Type :</label>
+					</div>
+					<div class="col-lg-4">
+						<input class="form-control" value="'.$order_type . '" readonly/>
+					</div>
+				</div>
+				<div class="order_no_search_form row">
+					<div class="col-lg-12">
+						<table class="table" id="add-to-cart-table">
+							<thead>
+							<tr>
+								<th>Product</th>
+								<th>Price</th>
+								<th>Quantity</th>
+								<th>Subtotal</th>
+							</tr>
+							</thead>
+							<tbody>
+								'.$order_detail_view.'
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="order_no_search_form row">
+					<div class="col-lg-6">
+						<div class="form-group">
+						</div>
+					</div>
+					<div class="col-lg-2">
+						<label>Total :</label>
+					</div>
+					<div class="col-lg-4">
+						<input class="form-control" name="total" id="snacks-total" value="'.$order_header->total.'" readonly>
+					</div>
+					</div>
+				</div>
+				<div class="order_no_search_form row">
+					<div class="col-lg-6">
+						<div class="form-group">
+						</div>
+					</div>
+					<div class="col-lg-2">
+						<label>Money :</label>
+					</div>
+					<div class="col-lg-4">
+						<input class="form-control" name="snacks_money" id="snacks_money" onClick="this.select();" value="'.$order_header->money.'" readonly>
+					</div>
+				</div>
+				<div class="order_no_search_form row">
+					<div class="col-lg-6">
+						<div class="form-group">
+						</div>
+					</div>
+					<div class="col-lg-2">
+						<label>Change :</label>
+					</div>
+					<div class="col-lg-4">
+						<input class="form-control" name="change" id="snacks-change" value="'.$order_header->money_change.'" readonly>
+					</div>
+				</div><br>
+				<div class="order_no_search_form row">
+					<div class="col-lg-6">
+						<div class="form-group">
+						</div>
+					</div>
+					<div class="col-lg-6">
+						<button type="button" class="btn btn-success" data-dismiss="modal">Okay</button>
+					</div>
+				</div>
+				';
+			}
+			
 			$result['error'] = 0;
 			$result['search_order_form'] = $html_draw;
 		}else{

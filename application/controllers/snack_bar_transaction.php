@@ -345,6 +345,7 @@ class Snack_bar_transaction extends CI_Controller {
 				$row = array();					
 				//$row[] = $aRow['customer_id'];
 				//$row[] = $aRow['first_name'].' '.$aRow['last_name'];
+				$row[] = '';
 				$row[] = $aRow['order_no'];
 				$row[] = $aRow['order_type'];
 				$row[] = $aRow['datetime_created'];
@@ -365,12 +366,13 @@ class Snack_bar_transaction extends CI_Controller {
 			}
 			
 			$row = array();
+			$row[] = '<b>' . 'Total:' . '</b>';
 			$row[] = '';
 			$row[] = '';
 			$row[] = '';
 			$row[] = '';
-			$row[] = 'TOTAL:';
-			$row[] = $allTotal;
+			$row[] = '';
+			$row[] = '<b>' . $allTotal . '</b>';
 			
 			$i++;
 			$output['aaData'][] = $row;
