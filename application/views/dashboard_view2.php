@@ -1173,8 +1173,8 @@
 			
 			$.get("<?php echo $this->config->base_url().'dashboard/get_products';?>",function(result){
 				// console.log(result);
-				var snacks_bar_form = '\
-				<form id="snacks_bar_form" method="post" action="<?php echo $this->config->base_url().'dashboard/snacks_bar_transaction';?>">'+search_form+'\
+				var snacks_bar_form = search_form + '\
+				<form id="snacks_bar_form" method="post" action="<?php echo $this->config->base_url().'dashboard/snacks_bar_transaction';?>">\
 				<div id="order_no_search_form">\
 				<div class="order_no_search_form row">\
 					<div class="col-lg-12">\
@@ -1285,7 +1285,7 @@
 						</div>\
 					</div>\
 					<div class="col-lg-6">\
-						<button type="button" class="co-button btn btn-success">Check-Out</button>\
+						<button type="submit" class="co-button btn btn-success">Check-Out</button>\
 						<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>\
 					</div>\
 				</div>\
@@ -1300,30 +1300,11 @@
 					$("#dynamic-modal-footer").html('');
 					$("#dynamic-modal").modal({show:true});
 					
-					$(document).on("click",".co-button",function(){
-						if(!confirm('Please confirm the inputted data!')){
-							return false;
-						}
-						
-						var snacks_total = parseFloat($("#snacks-total").val());
-						if(snacks_total<=0){
-							alert("Total must not be zero.");
-							return false;
-						}
-						
-						var snacks_money = parseFloat($("#snacks_money").val());
-						if(snacks_money<=0){
-							alert("Money must not be zero.");
-							return false;
-						}
-						var change = $("#snacks-change").val();
-						if(change<0){
-							alert("Money must be greater than or equal to Total.");
-							return false;
-						}
-						
-						$('#snacks_bar_form').submit();
+					$('#dynamic-modal').on('shown.bs.modal', function() {
+						$('#room').focus();
 					});
+					
+					/*
 					
 					$('#snacks_bar_form')
 					.bootstrapValidator({
@@ -1384,7 +1365,7 @@
 						}, 'json');
 						
 						e.stopImmediatePropagation();
-					});
+					}); */
 				}, 1000);
 				
 				// $(document).on("click",".money-button11",function(){
@@ -1422,6 +1403,71 @@
 			}, 'json');
 		});
 		
+		$("#dynamic-modal-body").on('submit', '#snacks_bar_form', function(e, data) {
+			e.preventDefault();
+			
+			// validate if user selected a room number when selecting room as type
+			if ($('#snacks_type').val() == 'room') {
+				if ($('#room').val() == 0) {
+					alert('Please select a room number.');
+					return false;
+				}
+			}
+			
+			var snacks_total = parseFloat($("#snacks-total").val());
+			if(snacks_total<=0){
+				alert("Total must not be zero.");
+				return false;
+			}
+			
+			var snacks_money = parseFloat($("#snacks_money").val());
+			if(snacks_money<=0){
+				alert("Money must not be zero.");
+				return false;
+			}
+			
+			var change = $("#snacks-change").val();
+			if(change<0){
+				alert("Money must be greater than or equal to Total.");
+				return false;
+			}
+			
+			if(!confirm('Please confirm the inputted data!')){
+				return false;
+			}
+			else {
+				var $form = $(e.target);
+				
+				$("#dynamic-modal").modal("hide");
+				$("body").mLoading();
+				
+				$.post($form.attr('action'), $form.serialize(), function(result) {
+					if(result.error == 0) {
+						setTimeout(function(){
+							$("body").mLoading("hide");
+							$("#dynamic-modal-title").html('Success Message');
+							$("#dynamic-modal-body").html('<div class="alert alert-success"><strong>Attention!</strong> '+result.message+'</div>');
+							$("#dynamic-modal-footer").html('<button type="button" class="btn btn-danger" data-dismiss="modal">Ok</button>');
+							$("#dynamic-modal").modal({show:true});
+						}, 1000);
+						setTimeout(function(){
+							$("body").mLoading("hide");
+							window.location.href = "<?php echo $this->config->base_url().'dashboard/monitor';?>";
+						}, 4000);
+					}
+					else {
+						setTimeout(function(){
+							$("body").mLoading("hide");
+							$("#dynamic-modal-title").html('Error Message');
+							$("#dynamic-modal-body").html('<div class="alert alert-warning"><strong>Attention!</strong> '+result.message+'</div>');
+							$("#dynamic-modal-footer").html('<button type="button" class="btn btn-danger" data-dismiss="modal">Ok</button>');
+							$("#dynamic-modal").modal({show:true});
+						}, 1000);
+					}
+				}, 'json');
+			}
+		});
+					
 		$(document).on("click",".money-button11",function(){
 			var money = parseFloat($("#snacks_money").val());
 			var amount = parseFloat($(this).attr("amount"));

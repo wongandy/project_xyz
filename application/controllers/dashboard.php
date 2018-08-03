@@ -999,7 +999,7 @@ class Dashboard extends CI_Controller {
 						</div>
 					</div>
 					<div class="col-lg-6">
-						<button type="button" class="btn btn-success" data-dismiss="modal">Okay</button>
+						<button type="button" id="snacks-bar-window" class="btn btn-success" data-dismiss="modal">Okay</button>
 					</div>
 				</div>
 				';
