@@ -267,7 +267,7 @@
 						</div>\
 					</div>\
 					<div class="col-lg-6">\
-						<button type="button" class="as-button btn btn-success">Submit</button>\
+						<button type="submit" class="as-button btn btn-success">Submit</button>\
 						<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>\
 					</div>\
 				</div>\
@@ -280,129 +280,9 @@
 				$("#dynamic-modal-body").html(additional_person_form);
 				$("#dynamic-modal-footer").html('');
 				$("#dynamic-modal").modal({show:true});
-				
-				$(document).on("click",".as-button",function(){
-					if(!confirm('Please confirm the inputted data!')){
-						return false;
-					}
-					
-					var notesx = $("#description").val();
-					var additional_person = $("#additional_person").val();
-					
-					if(additional_person<=0 && notesx==''){
-						alert("Please do input Additional Person or Notes.");
-						return false;
-					}
-					
-					var change = $("#additionalp_change").val();
-					if(change<0){
-						alert("Money must be greater than or equal to Total.");
-						return false;
-					}
-					
-					$('#additional_person_form').submit();
-				});
-				
-				$('#additional_person_form')
-				.bootstrapValidator({
-					message: 'This value is not valid',
-					feedbackIcons: {
-						valid: 'glyphicon glyphicon-ok',
-						invalid: 'glyphicon glyphicon-remove',
-						validating: 'glyphicon glyphicon-refresh'
-					}
-					// fields: {
-						// additional_person: {
-							// validators: {
-								// notEmpty: {
-									// message: 'Additional Person is required'
-								// }
-							// }
-						// },
-						// additionalp_money: {
-							// validators: {
-								// notEmpty: {
-									// message: 'Money is required'
-								// }
-							// }
-						// }
-					// }
-				})
-				.on('success.form.bv', function(e,data) {
-					// Prevent form submission
-					e.preventDefault();
-
-					// Get the form instance
-					var $form = $(e.target);
-
-					// Get the BootstrapValidator instance
-					var bv = $form.data('bootstrapValidator');
-					
-					$("#dynamic-modal").modal("hide");
-					$("body").mLoading();
-					
-					$.post($form.attr('action'), $form.serialize(), function(result) {
-						if(result.error == 0)
-						{
-							setTimeout(function(){
-								$("body").mLoading("hide");
-								$("#dynamic-modal-title").html('Success Message');
-								$("#dynamic-modal-body").html('<div class="alert alert-success"><strong>Attention!</strong> '+result.message+'</div>');
-								$("#dynamic-modal-footer").html('<button type="button" class="btn btn-danger" data-dismiss="modal">Ok</button>');
-								$("#dynamic-modal").modal({show:true});
-							}, 1000);
-							setTimeout(function(){
-								$("body").mLoading("hide");
-								window.location.href = "<?php echo $this->config->base_url().'dashboard/monitor';?>";
-							}, 4000);
-						}
-						else
-						{
-							setTimeout(function(){
-								$("body").mLoading("hide");
-								$("#dynamic-modal-title").html('Error Message');
-								$("#dynamic-modal-body").html('<div class="alert alert-warning"><strong>Attention!</strong> '+result.message+'</div>');
-								$("#dynamic-modal-footer").html('<button type="button" class="btn btn-danger" data-dismiss="modal">Ok</button>');
-								$("#dynamic-modal").modal({show:true});
-							}, 1000);
-						}
-					}, 'json');
-				});
 			}, 1000);
-			
-			// $(document).on("click",".money-button",function(){
-				// var money = parseFloat($("#additionalp_money").val());
-				// var amount = parseFloat($(this).attr("amount"));
-				
-				// var total = money+amount;
-				// if(amount==0)
-					// total = 0;
-				
-				// $("#additionalp_money").val(total);
-				
-				// var additional_person = parseInt($("#additional_person").val());
-				// var money = parseInt($("#additionalp_money").val());
-				// var per_person_price = parseInt($("#per_person_price").val());
-				// var total = 0;
-				// var change = 0;
-				
-				// if(additional_person<0 || isNaN(additional_person)){
-					// additional_person = 0;
-					// $("#additional_person").val(0);
-				// }
-				// total = additional_person*per_person_price;
-				
-				// if(money<0 || isNaN(money)){
-					// money = 0;
-					// $("#additionalp_money").val(0);
-				// }
-					
-				// change = money-total;
-				
-				// $("#additionalp_total").val(total);
-				// $("#additionalp_change").val(change);
-			// });
-		  }else{//VACANT WITH CHECK IN
+		  }
+		  else {//VACANT WITH CHECK IN
 			$.post("<?php echo $this->config->base_url().'dashboard/get_rooms_movies2';?>",{check_in:check_in, room_id:room_id},function(result){
 				// console.log(result);
 				var movie_room_check_in_form2 = '\
@@ -497,7 +377,7 @@
 						<button type="button" class="money-button1 btn btn-warning" amount="0">Reset</button>\
 					</div>\
 					<div class="col-lg-6">\
-						<button type="button" class="mrci2-button btn btn-success">Movie Room Check-In</button>\
+						<button type="submit" class="mrci2-button btn btn-success">Movie Room Check-In</button>\
 						<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>\
 					</div>\
 				</div>\
@@ -512,155 +392,123 @@
 					$("#dynamic-modal-body").html(movie_room_check_in_form2);
 					$("#dynamic-modal-footer").html('');
 					$("#dynamic-modal").modal({show:true});
-					
-					$(document).on("click",".mrci2-button",function(){
-						if(!confirm('Please confirm the inputted data!')){
-							return false;
-						}
-						
-						var no_of_person = $("#no_of_person").val();
-						if(no_of_person<=0){
-							alert("No. of Person value must not be zero.");
-							return false;
-						}
-						var change = $("#change").val();
-						if(change<0){
-							alert("Money must be greater than or equal to Total.");
-							return false;
-						}
-						
-						$('#movie_room_form2').submit();
-					});
-					
-					$('#movie_room_form2')
-					.bootstrapValidator({
-						message: 'This value is not valid',
-						feedbackIcons: {
-							valid: 'glyphicon glyphicon-ok',
-							invalid: 'glyphicon glyphicon-remove',
-							validating: 'glyphicon glyphicon-refresh'
-						},
-						fields: {
-							money: {
-								validators: {
-									notEmpty: {
-										message: 'Money is required'
-									}
-								}
-							},
-							hour_value: {
-								validators: {
-									notEmpty: {
-										message: 'Check In Time Hour is required'
-									}
-								}
-							},
-							minute_value: {
-								validators: {
-									notEmpty: {
-										message: 'Check In Time Minute is required'
-									}
-								}
-							},
-							ampm_value: {
-								validators: {
-									notEmpty: {
-										message: 'Check In Time AM/PM is required'
-									}
-								}
-							}
-						}
-					})
-					.on('success.form.bv', function(e,data) {
-						// Prevent form submission
-						e.preventDefault();
-
-						// Get the form instance
-						var $form = $(e.target);
-
-						// Get the BootstrapValidator instance
-						var bv = $form.data('bootstrapValidator');
-						
-						$("body").mLoading();
-						
-						$.post($form.attr('action'), $form.serialize(), function(result) {
-							console.log(result);
-							// return false;
-							if(result.error == 0)
-							{
-								$("#dynamic-modal").modal("hide");
-								
-								setTimeout(function(){
-									$("body").mLoading("hide");
-									$("#dynamic-modal-title").html('Success Message');
-									$("#dynamic-modal-body").html('<div class="alert alert-success"><strong>Attention!</strong> '+result.message+'</div>');
-									$("#dynamic-modal-footer").html('<button type="button" class="btn btn-danger" data-dismiss="modal">Ok</button>');
-									$("#dynamic-modal").modal({show:true});
-								}, 1000);
-								setTimeout(function(){
-									$("body").mLoading("hide");
-									window.location.href = "<?php echo $this->config->base_url().'dashboard/monitor';?>";
-								}, 4000);
-							}
-							else
-							{
-								setTimeout(function(){
-									$("body").mLoading("hide");
-									alert(result.message);
-									return false;
-								}, 1000);
-								// setTimeout(function(){
-									// $("body").mLoading("hide");
-									// $("#dynamic-modal-title").html('Error Message');
-									// $("#dynamic-modal-body").html('<div class="alert alert-warning"><strong>Attention!</strong> '+result.message+'</div>');
-									// $("#dynamic-modal-footer").html('<button type="button" class="btn btn-danger" data-dismiss="modal">Ok</button>');
-									// $("#dynamic-modal").modal({show:true});
-								// }, 1000);
-							}
-						}, 'json');
-					});
 				}, 1000);
-				
-				// $(document).on("click",".money-button2",function(){
-					// var money = parseFloat($("#money").val());
-					// var amount = parseFloat($(this).attr("amount"));
-					
-					// var total = money+amount;
-					// if(amount==0)
-						// total = 0;
-					
-					// $("#money").val(total);
-					
-					// var no_of_person = parseInt($("#no_of_person").val());
-					// var corkage = parseInt($("#corkage").val());
-					// var money = parseInt($("#money").val());
-					// var per_person_price = parseInt($("#per_person_price").val());
-					// var corkage_price = parseInt($("#corkage_price").val());
-					// var total = 0;
-					// var change = 0;
-					
-					// if(no_of_person<0 || isNaN(no_of_person)){
-						// no_of_person = 0;
-						// $("#no_of_person").val(0);
-					// }
-					// total = no_of_person*per_person_price;
-					
-					// if(money<0 || isNaN(money)){
-						// money = 0;
-						// $("#money").val(0);
-					// }
-					
-					// if(corkage==1)
-						// total = parseInt(total)+parseInt(corkage_price);
-						
-					// change = money-total;
-					
-					// $("#total").val(total);
-					// $("#change").val(change);
-				// });
-				
 			}, 'json');
 		  }
+		});
+		
+		$('#dynamic-modal-body').on('submit', '#additional_person_form', function(e) {
+			e.preventDefault();
+			
+			var notesx = $("#description").val();
+			var additional_person = $("#additional_person").val();
+			
+			if(additional_person<=0 && notesx==''){
+				alert("Please do input Additional Person or Notes.");
+				return false;
+			}
+			
+			var change = $("#additionalp_change").val();
+			
+			if(change<0){
+				alert("Money must be greater than or equal to Total.");
+				return false;
+			}
+			
+			if(!confirm('Please confirm the inputted data!')){
+				return false;
+			}
+			else {
+				var $form = $(e.target);
+			
+				$("#dynamic-modal").modal("hide");
+				$("body").mLoading();
+				
+				$.post($form.attr('action'), $form.serialize(), function(result) {
+					if(result.error == 0)
+					{
+						setTimeout(function(){
+							$("body").mLoading("hide");
+							$("#dynamic-modal-title").html('Success Message');
+							$("#dynamic-modal-body").html('<div class="alert alert-success"><strong>Attention!</strong> '+result.message+'</div>');
+							$("#dynamic-modal-footer").html('<button type="button" class="btn btn-danger" data-dismiss="modal">Ok</button>');
+							$("#dynamic-modal").modal({show:true});
+						}, 1000);
+						setTimeout(function(){
+							$("body").mLoading("hide");
+							window.location.href = "<?php echo $this->config->base_url().'dashboard/monitor';?>";
+						}, 4000);
+					}
+					else
+					{
+						setTimeout(function(){
+							$("body").mLoading("hide");
+							$("#dynamic-modal-title").html('Error Message');
+							$("#dynamic-modal-body").html('<div class="alert alert-warning"><strong>Attention!</strong> '+result.message+'</div>');
+							$("#dynamic-modal-footer").html('<button type="button" class="btn btn-danger" data-dismiss="modal">Ok</button>');
+							$("#dynamic-modal").modal({show:true});
+						}, 1000);
+					}
+				}, 'json');
+			}
+		});
+		
+		$('#dynamic-modal-body').on('submit', '#movie_room_form2', function(e) {
+			e.preventDefault();
+			
+			var no_of_person = $("#no_of_person").val();
+			
+			if(no_of_person<=0){
+				alert("No. of Person value must not be zero.");
+				return false;
+			}
+			
+			var change = $("#change").val();
+			
+			if(change<0){
+				alert("Money must be greater than or equal to Total.");
+				return false;
+			}
+			
+			if(!confirm('Please confirm the inputted data!')){
+				return false;
+			}
+			else {
+				// Prevent form submission
+				e.preventDefault();
+
+				// Get the form instance
+				var $form = $(e.target);
+				
+				$("body").mLoading();
+				
+				$.post($form.attr('action'), $form.serialize(), function(result) {
+					if(result.error == 0)
+					{
+						$("#dynamic-modal").modal("hide");
+						
+						setTimeout(function(){
+							$("body").mLoading("hide");
+							$("#dynamic-modal-title").html('Success Message');
+							$("#dynamic-modal-body").html('<div class="alert alert-success"><strong>Attention!</strong> '+result.message+'</div>');
+							$("#dynamic-modal-footer").html('<button type="button" class="btn btn-danger" data-dismiss="modal">Ok</button>');
+							$("#dynamic-modal").modal({show:true});
+						}, 1000);
+						setTimeout(function(){
+							$("body").mLoading("hide");
+							window.location.href = "<?php echo $this->config->base_url().'dashboard/monitor';?>";
+						}, 4000);
+					}
+					else
+					{
+						setTimeout(function(){
+							$("body").mLoading("hide");
+							alert(result.message);
+							return false;
+						}, 1000);
+					}
+				}, 'json');
+			}
 		});
 		
 		$(document).on("click",".money-button",function(){
@@ -886,7 +734,7 @@
 						<button type="button" class="money-button2 btn btn-warning" amount="0">Reset</button>\
 					</div>\
 					<div class="col-lg-6">\
-						<button type="button" class="mrci-button btn btn-success">Movie Room Check-In</button>\
+						<button type="submit" class="mrci-button btn btn-success">Movie Room Check-In</button>\
 						<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>\
 					</div>\
 				</div>\
@@ -902,25 +750,7 @@
 					$("#dynamic-modal-footer").html('');
 					$("#dynamic-modal").modal({show:true});
 					
-					$(document).on("click",".mrci-button",function(){
-						if(!confirm('Please confirm the inputted data!')){
-							return false;
-						}
-						
-						var no_of_person = $("#no_of_person").val();
-						if(no_of_person<=0){
-							alert("No. of Person value must not be zero.");
-							return false;
-						}
-						var change = $("#change").val();
-						if(change<0){
-							alert("Money must be greater than or equal to Total.");
-							return false;
-						}
-						
-						$('#movie_room_form').submit();
-					});
-					
+					/*
 					$('#movie_room_form')
 					.bootstrapValidator({
 						message: 'This value is not valid',
@@ -1008,7 +838,7 @@
 						}, 'json');
 						
 						e.stopImmediatePropagation();
-					});
+					});*/
 				}, 1000);
 				
 				// $(document).on("click",".money-button1",function(){
@@ -1050,6 +880,66 @@
 				// });
 				
 			}, 'json');
+		});
+		
+		$("#dynamic-modal-body").on('submit', '#movie_room_form', function(e) {
+			e.preventDefault();
+
+			var no_of_person = $("#no_of_person").val();
+			
+			if(no_of_person<=0){
+				alert("No. of Person value must not be zero.");
+				return false;
+			}
+			var change = $("#change").val();
+			if(change<0){
+				alert("Money must be greater than or equal to Total.");
+				return false;
+			}
+			
+			if(!confirm('Please confirm the inputted data!')){
+				return false;
+			}
+			else {
+				// Get the form instance
+				var $form = $(e.target);
+				
+				$("body").mLoading();
+				
+				$.post($form.attr('action'), $form.serialize(), function(result) {
+					if(result.error == 0)
+					{
+						$("#dynamic-modal").modal("hide");
+						
+						setTimeout(function(){
+							$("body").mLoading("hide");
+							$("#dynamic-modal-title").html('Success Message');
+							$("#dynamic-modal-body").html('<div class="alert alert-success"><strong>Attention!</strong> '+result.message+'</div>');
+							$("#dynamic-modal-footer").html('<button type="button" class="btn btn-danger" data-dismiss="modal">Ok</button>');
+							$("#dynamic-modal").modal({show:true});
+						}, 1000);
+						setTimeout(function(){
+							$("body").mLoading("hide");
+							window.location.href = "<?php echo $this->config->base_url().'dashboard/monitor';?>";
+						}, 4000);
+					}
+					else
+					{
+						setTimeout(function(){
+							$("body").mLoading("hide");
+							alert(result.message);
+							return false;
+						}, 1000);
+						// setTimeout(function(){
+							// $("body").mLoading("hide");
+							// $("#dynamic-modal-title").html('Error Message');
+							// $("#dynamic-modal-body").html('<div class="alert alert-warning"><strong>Attention!</strong> '+result.message+'</div>');
+							// $("#dynamic-modal-footer").html('<button type="button" class="btn btn-danger" data-dismiss="modal">Ok</button>');
+							// $("#dynamic-modal").modal({show:true});
+						// }, 1000);
+					}
+				}, 'json');
+			}
 		});
 		
 		$(document).on("click",".money-button2",function(){
