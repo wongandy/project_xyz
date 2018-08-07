@@ -173,10 +173,10 @@
 	<script src="<?php echo $this->config->base_url().'chemicals/';?>assets/scripts/jquery.mloading.js"></script>
 
 	<script>
-	function edit_this(theid){
+	function edit_this(theid, order_no){
 		$("body").mLoading();
 		
-		$.get("<?php echo $this->config->base_url().'snack_bar_transaction/get_snack_bar_detail';?>/"+theid,function(result){
+		$.get("<?php echo $this->config->base_url().'snack_bar_transaction/get_snack_bar_detail';?>/"+theid+"/"+order_no,function(result){
 		
 		console.log(result);
 		

@@ -830,7 +830,7 @@ class Dashboard extends CI_Controller {
 			$order_type = ($order_header->room != 0) ? $order_header->order_type . ' ' . $order_header->room : $order_header->order_type;
 			
 			// filter user role as snackbar role has different UI than other roles
-			if($this->session->userdata('role')!=3) {
+			/*if($this->session->userdata('role')!=3) {
 				$html_draw = '
 				<div class="order_no_search_form row">
 					<div class="col-lg-2">
@@ -928,8 +928,8 @@ class Dashboard extends CI_Controller {
 					</div>
 				</div>
 				';
-			}
-			else {
+			}*/
+			// else {
 				$html_draw = '
 				<div class="order_no_search_form row">
 					<div class="col-lg-2">
@@ -1003,7 +1003,7 @@ class Dashboard extends CI_Controller {
 					</div>
 				</div>
 				';
-			}
+			// }
 			
 			$result['error'] = 0;
 			$result['search_order_form'] = $html_draw;

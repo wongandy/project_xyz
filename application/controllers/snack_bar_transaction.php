@@ -36,8 +36,8 @@ class Snack_bar_transaction extends CI_Controller {
 		echo json_encode($result);
 	}
 	
-	public function get_snack_bar_detail($order_no){
-		$order_header = $this->snack_bar_transaction->get_order_header3($order_no);
+	public function get_snack_bar_detail($id, $order_no){
+		$order_header = $this->snack_bar_transaction->get_order_header3($id);
 		$order_detail = $this->snack_bar_transaction->get_order_detail($order_no);
 		
 		$order_detail_view = '';
@@ -292,6 +292,8 @@ class Snack_bar_transaction extends CI_Controller {
 			$aColumns = array(
 						  'a.order_no AS order_no',
 						  'a.order_type AS order_type',
+						  'a.room',
+						  'a.id',
 						  'DATE_FORMAT(a.datetime_created, "%M %d, %Y %H:%i:%s") AS datetime_created',
 						  'a.created_by AS created_by',
 						  'a.paid AS paid',
@@ -347,11 +349,14 @@ class Snack_bar_transaction extends CI_Controller {
 				//$row[] = $aRow['first_name'].' '.$aRow['last_name'];
 				$row[] = '';
 				$row[] = $aRow['order_no'];
-				$row[] = $aRow['order_type'];
+				// if order type is room, display room number
+				$row[] = ($aRow['order_type'] == 'room') ? $aRow['order_type'] . ' ' . $aRow['room'] : $aRow['order_type'];
 				$row[] = $aRow['datetime_created'];
 				$row[] = $aRow['created_by'];
 				$row[] = ($aRow['paid']==1?'Yes':'No');
-				$row[] = '<a href="#" onclick="edit_this('.$aRow['order_no'].')">'.$aRow['total'].'</a>';
+				$row[] = '<a href="#" onclick="edit_this(' . $aRow['id'] . ', ' . $aRow['order_no'] .')">'.$aRow['total'].'</a>';
+				
+				
 				
 				$allTotal = $allTotal+$aRow['total'];
 				// $row[] = '<a tag="'.$aRow['id'].'" id="priority_ticket_edit_btn_" href="#" style="color:#000;" onclick="edit_this('.$aRow['id'].')">

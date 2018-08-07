@@ -1155,252 +1155,171 @@
 	<?php //if($this->session->userdata('role')==1 OR $this->session->userdata('role')==2): ?>
 		var search_form = '\
 			<div class="row">\
-				<div class="col-lg-2">\
-					<label>Order No. :</label>\
-				</div>\
-				<div class="col-lg-4">\
-					<input type="number" class="form-control" name="search_order_no" id="search_order_no" onClick="this.select();">\
-				</div>\
-				<div class="col-lg-6">\
-					<button type="button" id="search_snack_bar" class="btn btn-default">Search</button>\
-				</div>\
+				<form id="search_snack_bar_form">\
+					<div class="col-lg-2">\
+						<label>Order No. :</label>\
+					</div>\
+					<div class="col-lg-4">\
+						<input type="number" class="form-control" name="search_order_no" id="search_order_no" autofocus onClick="this.select();">\
+					</div>\
+					<div class="col-lg-6">\
+						<button type="submit" id="search_snack_bar" class="btn btn-default">Search</button>\
+					</div>\
+				</form>\
 			</div><br>\
 		';
 	<?php //endif; ?>
 	var cart_items = 1;
 		$(document).on("click","#snacks-bar-window",function(){
+		var user_role = "<?php echo $this->session->userdata('role'); ?>";
+		
 			$("body").mLoading();
+			var snacks_bar_form = '';
 			
-			$.get("<?php echo $this->config->base_url().'dashboard/get_products';?>",function(result){
-				// console.log(result);
-				var snacks_bar_form = search_form + '\
-				<form id="snacks_bar_form" method="post" action="<?php echo $this->config->base_url().'dashboard/snacks_bar_transaction';?>">\
-				<div id="order_no_search_form">\
-				<div class="order_no_search_form row">\
-					<div class="col-lg-12">\
-						'+result.draw_products+'\
-					</div>\
-				</div>\
-				<div class="order_no_search_form row">\
-					<div class="col-lg-2">\
-						<label>Order No. :</label>\
-					</div>\
-					<div class="col-lg-4">\
-						<input type="number" class="form-control" id="order_no" name="order_no" value="'+result.order_no+'" readonly/>\
-					</div>\
-				</div>\
-				<div class="order_no_search_form row">\
-					<div class="col-lg-2">\
-						<label>Type :</label>\
-					</div>\
-					<div class="col-lg-4">\
-						<select class="form-control" id="snacks_type" name="snacks_type"><option value="room">Room</option><option value="take out">Take Out</option></select>\
-					</div>\
-				</div>\
-				<div class="order_no_search_form row" id="rooms_selectbox">\
-					<div class="col-lg-2">\
-						<label>Room :</label>\
-					</div>\
-					<div class="col-lg-4">\
-						'+result.rooms_selectbox+'\
-					</div>\
-				</div>\
-				<div class="order_no_search_form row">\
-					<div class="col-lg-12">\
-						<table class="table" id="add-to-cart-table">\
-							<thead>\
-							<tr>\
-								<th>Product</th>\
-								<th>Price</th>\
-								<th>Quantity</th>\
-								<th>Subtotal</th>\
-								<th>Remove</th>\
-							</tr>\
-							</thead>\
-						</table>\
-					</div>\
-				</div>\
-				<div class="order_no_search_form row">\
-					<div class="col-lg-1">\
-						<button type="button" class="money-button11 btn btn-default" amount="1">1</button>\
-					</div>\
-					<div class="col-lg-1">\
-						<button type="button" class="money-button11 btn btn-default" amount="5">5</button>\
-					</div>\
-					<div class="col-lg-1">\
-						<button type="button" class="money-button11 btn btn-default" amount="10">10</button>\
-					</div>\
-					<div class="col-lg-1">\
-						<button type="button" class="money-button11 btn btn-default" amount="20">20</button>\
-					</div>\
-					<div class="col-lg-1">\
-						<button type="button" class="money-button11 btn btn-default" amount="50">50</button>\
-					</div>\
-					<div class="col-lg-1">\
-						<button type="button" class="money-button11 btn btn-default" amount="100">100</button>\
-					</div>\
-					<div class="col-lg-2">\
-						<label>Total :</label>\
-					</div>\
-					<div class="col-lg-4">\
-						<input class="form-control" name="total" id="snacks-total" value="0.00" readonly>\
-					</div>\
-					</div>\
-				</div>\
-				<div class="order_no_search_form row">\
-					<div class="col-lg-1">\
-						<button type="button" class="money-button11 btn btn-default" amount="200">200</button>\
-					</div>\
-					<div class="col-lg-1">\
-						<button type="button" class="money-button11 btn btn-default" amount="500">500</button>\
-					</div>\
-					<div class="col-lg-2">\
-						<button type="button" class="money-button11 btn btn-default" amount="1000">1000</button>\
-					</div>\
-					<div class="col-lg-2">\
-						<button type="button" class="money-button11 btn btn-warning" amount="0">Reset</button>\
-					</div>\
-					<div class="col-lg-2">\
-						<label>Money :</label>\
-					</div>\
-					<div class="col-lg-4">\
-						<input class="form-control" name="snacks_money" id="snacks_money" onClick="this.select();" value="0.00" readonly>\
-					</div>\
-				</div>\
-				<div class="order_no_search_form row">\
-					<div class="col-lg-6">\
-						<div class="form-group">\
+			// if user role is not snackbar
+			if (user_role != 3) {
+				$.get("<?php echo $this->config->base_url().'dashboard/get_products';?>",function(result){
+					snacks_bar_form = search_form + '\
+					<form id="snacks_bar_form" method="post" action="<?php echo $this->config->base_url().'dashboard/snacks_bar_transaction';?>">\
+					<div id="order_no_search_form">\
+					<div class="order_no_search_form row">\
+						<div class="col-lg-12">\
+							'+result.draw_products+'\
 						</div>\
 					</div>\
-					<div class="col-lg-2">\
-						<label>Change :</label>\
-					</div>\
-					<div class="col-lg-4">\
-						<input class="form-control" name="change" id="snacks-change" value="0.00" readonly>\
-					</div>\
-				</div><br>\
-				<div class="order_no_search_form row">\
-					<div class="col-lg-6">\
-						<div class="form-group">\
+					<div class="order_no_search_form row">\
+						<div class="col-lg-2">\
+							<label>Order No. :</label>\
+						</div>\
+						<div class="col-lg-4">\
+							<input type="number" class="form-control" id="order_no" name="order_no" value="'+result.order_no+'" readonly/>\
 						</div>\
 					</div>\
-					<div class="col-lg-6">\
-						<button type="submit" class="co-button btn btn-success">Check-Out</button>\
-						<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>\
+					<div class="order_no_search_form row">\
+						<div class="col-lg-2">\
+							<label>Type :</label>\
+						</div>\
+						<div class="col-lg-4">\
+							<select class="form-control" id="snacks_type" name="snacks_type"><option value="room">Room</option><option value="take out">Take Out</option></select>\
+						</div>\
 					</div>\
-				</div>\
-				</div>\
-				</form>\
-				';
+					<div class="order_no_search_form row" id="rooms_selectbox">\
+						<div class="col-lg-2">\
+							<label>Room :</label>\
+						</div>\
+						<div class="col-lg-4">\
+							'+result.rooms_selectbox+'\
+						</div>\
+					</div>\
+					<div class="order_no_search_form row">\
+						<div class="col-lg-12">\
+							<table class="table" id="add-to-cart-table">\
+								<thead>\
+								<tr>\
+									<th>Product</th>\
+									<th>Price</th>\
+									<th>Quantity</th>\
+									<th>Subtotal</th>\
+									<th>Remove</th>\
+								</tr>\
+								</thead>\
+							</table>\
+						</div>\
+					</div>\
+					<div class="order_no_search_form row">\
+						<div class="col-lg-1">\
+							<button type="button" class="money-button11 btn btn-default" amount="1">1</button>\
+						</div>\
+						<div class="col-lg-1">\
+							<button type="button" class="money-button11 btn btn-default" amount="5">5</button>\
+						</div>\
+						<div class="col-lg-1">\
+							<button type="button" class="money-button11 btn btn-default" amount="10">10</button>\
+						</div>\
+						<div class="col-lg-1">\
+							<button type="button" class="money-button11 btn btn-default" amount="20">20</button>\
+						</div>\
+						<div class="col-lg-1">\
+							<button type="button" class="money-button11 btn btn-default" amount="50">50</button>\
+						</div>\
+						<div class="col-lg-1">\
+							<button type="button" class="money-button11 btn btn-default" amount="100">100</button>\
+						</div>\
+						<div class="col-lg-2">\
+							<label>Total :</label>\
+						</div>\
+						<div class="col-lg-4">\
+							<input class="form-control" name="total" id="snacks-total" value="0.00" readonly>\
+						</div>\
+						</div>\
+					</div>\
+					<div class="order_no_search_form row">\
+						<div class="col-lg-1">\
+							<button type="button" class="money-button11 btn btn-default" amount="200">200</button>\
+						</div>\
+						<div class="col-lg-1">\
+							<button type="button" class="money-button11 btn btn-default" amount="500">500</button>\
+						</div>\
+						<div class="col-lg-2">\
+							<button type="button" class="money-button11 btn btn-default" amount="1000">1000</button>\
+						</div>\
+						<div class="col-lg-2">\
+							<button type="button" class="money-button11 btn btn-warning" amount="0">Reset</button>\
+						</div>\
+						<div class="col-lg-2">\
+							<label>Money :</label>\
+						</div>\
+						<div class="col-lg-4">\
+							<input class="form-control" name="snacks_money" id="snacks_money" onClick="this.select();" value="0.00" readonly>\
+						</div>\
+					</div>\
+					<div class="order_no_search_form row">\
+						<div class="col-lg-6">\
+							<div class="form-group">\
+							</div>\
+						</div>\
+						<div class="col-lg-2">\
+							<label>Change :</label>\
+						</div>\
+						<div class="col-lg-4">\
+							<input class="form-control" name="change" id="snacks-change" value="0.00" readonly>\
+						</div>\
+					</div><br>\
+					<div class="order_no_search_form row">\
+						<div class="col-lg-6">\
+							<div class="form-group">\
+							</div>\
+						</div>\
+						<div class="col-lg-6">\
+							<button type="submit" class="co-button btn btn-success">Check-Out</button>\
+							<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>\
+						</div>\
+					</div>\
+					</div>\
+					</form>\
+					';
+				}, 'json');
+			}
+			else {
+				snacks_bar_form = search_form+ '\
+					<form>\
+						<div id="order_no_search_form">\
+						</div>\
+					</form>\
+					';
+			}
+			
+			setTimeout(function(){
+				$("body").mLoading("hide");
+				$("#dynamic-modal-title").html('Snack Bar');
+				$("#dynamic-modal-body").html(snacks_bar_form);
+				$("#dynamic-modal-footer").html('');
+				$("#dynamic-modal").modal({show:true});
 				
-				setTimeout(function(){
-					$("body").mLoading("hide");
-					$("#dynamic-modal-title").html('Snack Bar');
-					$("#dynamic-modal-body").html(snacks_bar_form);
-					$("#dynamic-modal-footer").html('');
-					$("#dynamic-modal").modal({show:true});
-					
-					$('#dynamic-modal').on('shown.bs.modal', function() {
-						$('#room').focus();
-					});
-					
-					/*
-					
-					$('#snacks_bar_form')
-					.bootstrapValidator({
-						message: 'This value is not valid',
-						feedbackIcons: {
-							valid: 'glyphicon glyphicon-ok',
-							invalid: 'glyphicon glyphicon-remove',
-							validating: 'glyphicon glyphicon-refresh'
-						},
-						fields: {
-							snacks_money: {
-								validators: {
-									notEmpty: {
-										message: 'Money is required'
-									}
-								}
-							}
-						}
-					})
-					.on('success.form.bv', function(e,data) {
-						// Prevent form submission
-						e.preventDefault();
-
-						// Get the form instance
-						var $form = $(e.target);
-
-						// Get the BootstrapValidator instance
-						var bv = $form.data('bootstrapValidator');
-						
-						$("#dynamic-modal").modal("hide");
-						$("body").mLoading();
-						
-						$.post($form.attr('action'), $form.serialize(), function(result) {
-							if(result.error == 0)
-							{
-								setTimeout(function(){
-									$("body").mLoading("hide");
-									$("#dynamic-modal-title").html('Success Message');
-									$("#dynamic-modal-body").html('<div class="alert alert-success"><strong>Attention!</strong> '+result.message+'</div>');
-									$("#dynamic-modal-footer").html('<button type="button" class="btn btn-danger" data-dismiss="modal">Ok</button>');
-									$("#dynamic-modal").modal({show:true});
-								}, 1000);
-								setTimeout(function(){
-									$("body").mLoading("hide");
-									window.location.href = "<?php echo $this->config->base_url().'dashboard/monitor';?>";
-								}, 4000);
-							}
-							else
-							{
-								setTimeout(function(){
-									$("body").mLoading("hide");
-									$("#dynamic-modal-title").html('Error Message');
-									$("#dynamic-modal-body").html('<div class="alert alert-warning"><strong>Attention!</strong> '+result.message+'</div>');
-									$("#dynamic-modal-footer").html('<button type="button" class="btn btn-danger" data-dismiss="modal">Ok</button>');
-									$("#dynamic-modal").modal({show:true});
-								}, 1000);
-							}
-						}, 'json');
-						
-						e.stopImmediatePropagation();
-					}); */
-				}, 1000);
-				
-				// $(document).on("click",".money-button11",function(){
-					// var money = parseFloat($("#snacks_money").val());
-					// var amount = parseFloat($(this).attr("amount"));
-					
-					// var total = money+amount;
-					// if(amount==0)
-						// total = 0;
-					
-					// $("#snacks_money").val(total);
-					
-					// var money = parseFloat($("#snacks_money").val());
-					// var total = parseFloat($("#snacks-total").val());
-					
-					
-					// if(isNaN(money)){
-						// $("#snacks_money").val('0.00');
-						// money = parseFloat($("#snacks_money").val());
-					// }
-					
-					// var change = money-total;
-						
-					// $("#snacks-change").val(change);
-				// });
-				
-				// $(document).on("change","#snacks_type",function(){
-					// if(this.value!='room'){
-						// $("#rooms_selectbox").hide();
-					// }else{
-						// $("#rooms_selectbox").show();
-					// }
-				// });
-				
-			}, 'json');
+				$('#dynamic-modal').on('shown.bs.modal', function() {
+					$('#room').focus();
+				});
+			}, 1000);
 		});
 		
 		$("#dynamic-modal-body").on('submit', '#snacks_bar_form', function(e, data) {
@@ -1494,6 +1413,7 @@
 		
 		$(document).on("change","#snacks_type",function(){
 			if(this.value!='room'){
+				$("#room").val('');
 				$("#rooms_selectbox").hide();
 			}else{
 				$("#rooms_selectbox").show();
@@ -1648,9 +1568,11 @@
 			event.stopImmediatePropagation();
 		});
 		
-		$(document).on("click","#search_snack_bar",function(){
+		$("#dynamic-modal-body").on('submit', '#search_snack_bar_form', function(e) {
+			e.preventDefault();
 			var search_order_no = $("#search_order_no").val();
-			
+			$('#search_order_no').focus();
+
 			if(search_order_no!=''){
 			$("body").mLoading();
 			$.get("<?php echo $this->config->base_url().'dashboard/search_order_no';?>/"+search_order_no,function(result){
