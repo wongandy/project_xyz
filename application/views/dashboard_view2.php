@@ -267,7 +267,7 @@
 						</div>\
 					</div>\
 					<div class="col-lg-6">\
-						<button type="button" class="as-button btn btn-success">Submit</button>\
+						<button type="submit" class="as-button btn btn-success">Submit</button>\
 						<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>\
 					</div>\
 				</div>\
@@ -280,129 +280,9 @@
 				$("#dynamic-modal-body").html(additional_person_form);
 				$("#dynamic-modal-footer").html('');
 				$("#dynamic-modal").modal({show:true});
-				
-				$(document).on("click",".as-button",function(){
-					if(!confirm('Please confirm the inputted data!')){
-						return false;
-					}
-					
-					var notesx = $("#description").val();
-					var additional_person = $("#additional_person").val();
-					
-					if(additional_person<=0 && notesx==''){
-						alert("Please do input Additional Person or Notes.");
-						return false;
-					}
-					
-					var change = $("#additionalp_change").val();
-					if(change<0){
-						alert("Money must be greater than or equal to Total.");
-						return false;
-					}
-					
-					$('#additional_person_form').submit();
-				});
-				
-				$('#additional_person_form')
-				.bootstrapValidator({
-					message: 'This value is not valid',
-					feedbackIcons: {
-						valid: 'glyphicon glyphicon-ok',
-						invalid: 'glyphicon glyphicon-remove',
-						validating: 'glyphicon glyphicon-refresh'
-					}
-					// fields: {
-						// additional_person: {
-							// validators: {
-								// notEmpty: {
-									// message: 'Additional Person is required'
-								// }
-							// }
-						// },
-						// additionalp_money: {
-							// validators: {
-								// notEmpty: {
-									// message: 'Money is required'
-								// }
-							// }
-						// }
-					// }
-				})
-				.on('success.form.bv', function(e,data) {
-					// Prevent form submission
-					e.preventDefault();
-
-					// Get the form instance
-					var $form = $(e.target);
-
-					// Get the BootstrapValidator instance
-					var bv = $form.data('bootstrapValidator');
-					
-					$("#dynamic-modal").modal("hide");
-					$("body").mLoading();
-					
-					$.post($form.attr('action'), $form.serialize(), function(result) {
-						if(result.error == 0)
-						{
-							setTimeout(function(){
-								$("body").mLoading("hide");
-								$("#dynamic-modal-title").html('Success Message');
-								$("#dynamic-modal-body").html('<div class="alert alert-success"><strong>Attention!</strong> '+result.message+'</div>');
-								$("#dynamic-modal-footer").html('<button type="button" class="btn btn-danger" data-dismiss="modal">Ok</button>');
-								$("#dynamic-modal").modal({show:true});
-							}, 1000);
-							setTimeout(function(){
-								$("body").mLoading("hide");
-								window.location.href = "<?php echo $this->config->base_url().'dashboard/monitor';?>";
-							}, 4000);
-						}
-						else
-						{
-							setTimeout(function(){
-								$("body").mLoading("hide");
-								$("#dynamic-modal-title").html('Error Message');
-								$("#dynamic-modal-body").html('<div class="alert alert-warning"><strong>Attention!</strong> '+result.message+'</div>');
-								$("#dynamic-modal-footer").html('<button type="button" class="btn btn-danger" data-dismiss="modal">Ok</button>');
-								$("#dynamic-modal").modal({show:true});
-							}, 1000);
-						}
-					}, 'json');
-				});
 			}, 1000);
-			
-			// $(document).on("click",".money-button",function(){
-				// var money = parseFloat($("#additionalp_money").val());
-				// var amount = parseFloat($(this).attr("amount"));
-				
-				// var total = money+amount;
-				// if(amount==0)
-					// total = 0;
-				
-				// $("#additionalp_money").val(total);
-				
-				// var additional_person = parseInt($("#additional_person").val());
-				// var money = parseInt($("#additionalp_money").val());
-				// var per_person_price = parseInt($("#per_person_price").val());
-				// var total = 0;
-				// var change = 0;
-				
-				// if(additional_person<0 || isNaN(additional_person)){
-					// additional_person = 0;
-					// $("#additional_person").val(0);
-				// }
-				// total = additional_person*per_person_price;
-				
-				// if(money<0 || isNaN(money)){
-					// money = 0;
-					// $("#additionalp_money").val(0);
-				// }
-					
-				// change = money-total;
-				
-				// $("#additionalp_total").val(total);
-				// $("#additionalp_change").val(change);
-			// });
-		  }else{//VACANT WITH CHECK IN
+		  }
+		  else {//VACANT WITH CHECK IN
 			$.post("<?php echo $this->config->base_url().'dashboard/get_rooms_movies2';?>",{check_in:check_in, room_id:room_id},function(result){
 				// console.log(result);
 				var movie_room_check_in_form2 = '\
@@ -497,7 +377,7 @@
 						<button type="button" class="money-button1 btn btn-warning" amount="0">Reset</button>\
 					</div>\
 					<div class="col-lg-6">\
-						<button type="button" class="mrci2-button btn btn-success">Movie Room Check-In</button>\
+						<button type="submit" class="mrci2-button btn btn-success">Movie Room Check-In</button>\
 						<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>\
 					</div>\
 				</div>\
@@ -512,155 +392,123 @@
 					$("#dynamic-modal-body").html(movie_room_check_in_form2);
 					$("#dynamic-modal-footer").html('');
 					$("#dynamic-modal").modal({show:true});
-					
-					$(document).on("click",".mrci2-button",function(){
-						if(!confirm('Please confirm the inputted data!')){
-							return false;
-						}
-						
-						var no_of_person = $("#no_of_person").val();
-						if(no_of_person<=0){
-							alert("No. of Person value must not be zero.");
-							return false;
-						}
-						var change = $("#change").val();
-						if(change<0){
-							alert("Money must be greater than or equal to Total.");
-							return false;
-						}
-						
-						$('#movie_room_form2').submit();
-					});
-					
-					$('#movie_room_form2')
-					.bootstrapValidator({
-						message: 'This value is not valid',
-						feedbackIcons: {
-							valid: 'glyphicon glyphicon-ok',
-							invalid: 'glyphicon glyphicon-remove',
-							validating: 'glyphicon glyphicon-refresh'
-						},
-						fields: {
-							money: {
-								validators: {
-									notEmpty: {
-										message: 'Money is required'
-									}
-								}
-							},
-							hour_value: {
-								validators: {
-									notEmpty: {
-										message: 'Check In Time Hour is required'
-									}
-								}
-							},
-							minute_value: {
-								validators: {
-									notEmpty: {
-										message: 'Check In Time Minute is required'
-									}
-								}
-							},
-							ampm_value: {
-								validators: {
-									notEmpty: {
-										message: 'Check In Time AM/PM is required'
-									}
-								}
-							}
-						}
-					})
-					.on('success.form.bv', function(e,data) {
-						// Prevent form submission
-						e.preventDefault();
-
-						// Get the form instance
-						var $form = $(e.target);
-
-						// Get the BootstrapValidator instance
-						var bv = $form.data('bootstrapValidator');
-						
-						$("body").mLoading();
-						
-						$.post($form.attr('action'), $form.serialize(), function(result) {
-							console.log(result);
-							// return false;
-							if(result.error == 0)
-							{
-								$("#dynamic-modal").modal("hide");
-								
-								setTimeout(function(){
-									$("body").mLoading("hide");
-									$("#dynamic-modal-title").html('Success Message');
-									$("#dynamic-modal-body").html('<div class="alert alert-success"><strong>Attention!</strong> '+result.message+'</div>');
-									$("#dynamic-modal-footer").html('<button type="button" class="btn btn-danger" data-dismiss="modal">Ok</button>');
-									$("#dynamic-modal").modal({show:true});
-								}, 1000);
-								setTimeout(function(){
-									$("body").mLoading("hide");
-									window.location.href = "<?php echo $this->config->base_url().'dashboard/monitor';?>";
-								}, 4000);
-							}
-							else
-							{
-								setTimeout(function(){
-									$("body").mLoading("hide");
-									alert(result.message);
-									return false;
-								}, 1000);
-								// setTimeout(function(){
-									// $("body").mLoading("hide");
-									// $("#dynamic-modal-title").html('Error Message');
-									// $("#dynamic-modal-body").html('<div class="alert alert-warning"><strong>Attention!</strong> '+result.message+'</div>');
-									// $("#dynamic-modal-footer").html('<button type="button" class="btn btn-danger" data-dismiss="modal">Ok</button>');
-									// $("#dynamic-modal").modal({show:true});
-								// }, 1000);
-							}
-						}, 'json');
-					});
 				}, 1000);
-				
-				// $(document).on("click",".money-button2",function(){
-					// var money = parseFloat($("#money").val());
-					// var amount = parseFloat($(this).attr("amount"));
-					
-					// var total = money+amount;
-					// if(amount==0)
-						// total = 0;
-					
-					// $("#money").val(total);
-					
-					// var no_of_person = parseInt($("#no_of_person").val());
-					// var corkage = parseInt($("#corkage").val());
-					// var money = parseInt($("#money").val());
-					// var per_person_price = parseInt($("#per_person_price").val());
-					// var corkage_price = parseInt($("#corkage_price").val());
-					// var total = 0;
-					// var change = 0;
-					
-					// if(no_of_person<0 || isNaN(no_of_person)){
-						// no_of_person = 0;
-						// $("#no_of_person").val(0);
-					// }
-					// total = no_of_person*per_person_price;
-					
-					// if(money<0 || isNaN(money)){
-						// money = 0;
-						// $("#money").val(0);
-					// }
-					
-					// if(corkage==1)
-						// total = parseInt(total)+parseInt(corkage_price);
-						
-					// change = money-total;
-					
-					// $("#total").val(total);
-					// $("#change").val(change);
-				// });
-				
 			}, 'json');
 		  }
+		});
+		
+		$('#dynamic-modal-body').on('submit', '#additional_person_form', function(e) {
+			e.preventDefault();
+			
+			var notesx = $("#description").val();
+			var additional_person = $("#additional_person").val();
+			
+			if(additional_person<=0 && notesx==''){
+				alert("Please do input Additional Person or Notes.");
+				return false;
+			}
+			
+			var change = $("#additionalp_change").val();
+			
+			if(change<0){
+				alert("Money must be greater than or equal to Total.");
+				return false;
+			}
+			
+			if(!confirm('Please confirm the inputted data!')){
+				return false;
+			}
+			else {
+				var $form = $(e.target);
+			
+				$("#dynamic-modal").modal("hide");
+				$("body").mLoading();
+				
+				$.post($form.attr('action'), $form.serialize(), function(result) {
+					if(result.error == 0)
+					{
+						setTimeout(function(){
+							$("body").mLoading("hide");
+							$("#dynamic-modal-title").html('Success Message');
+							$("#dynamic-modal-body").html('<div class="alert alert-success"><strong>Attention!</strong> '+result.message+'</div>');
+							$("#dynamic-modal-footer").html('<button type="button" class="btn btn-danger" data-dismiss="modal">Ok</button>');
+							$("#dynamic-modal").modal({show:true});
+						}, 1000);
+						setTimeout(function(){
+							$("body").mLoading("hide");
+							window.location.href = "<?php echo $this->config->base_url().'dashboard/monitor';?>";
+						}, 4000);
+					}
+					else
+					{
+						setTimeout(function(){
+							$("body").mLoading("hide");
+							$("#dynamic-modal-title").html('Error Message');
+							$("#dynamic-modal-body").html('<div class="alert alert-warning"><strong>Attention!</strong> '+result.message+'</div>');
+							$("#dynamic-modal-footer").html('<button type="button" class="btn btn-danger" data-dismiss="modal">Ok</button>');
+							$("#dynamic-modal").modal({show:true});
+						}, 1000);
+					}
+				}, 'json');
+			}
+		});
+		
+		$('#dynamic-modal-body').on('submit', '#movie_room_form2', function(e) {
+			e.preventDefault();
+			
+			var no_of_person = $("#no_of_person").val();
+			
+			if(no_of_person<=0){
+				alert("No. of Person value must not be zero.");
+				return false;
+			}
+			
+			var change = $("#change").val();
+			
+			if(change<0){
+				alert("Money must be greater than or equal to Total.");
+				return false;
+			}
+			
+			if(!confirm('Please confirm the inputted data!')){
+				return false;
+			}
+			else {
+				// Prevent form submission
+				e.preventDefault();
+
+				// Get the form instance
+				var $form = $(e.target);
+				
+				$("body").mLoading();
+				
+				$.post($form.attr('action'), $form.serialize(), function(result) {
+					if(result.error == 0)
+					{
+						$("#dynamic-modal").modal("hide");
+						
+						setTimeout(function(){
+							$("body").mLoading("hide");
+							$("#dynamic-modal-title").html('Success Message');
+							$("#dynamic-modal-body").html('<div class="alert alert-success"><strong>Attention!</strong> '+result.message+'</div>');
+							$("#dynamic-modal-footer").html('<button type="button" class="btn btn-danger" data-dismiss="modal">Ok</button>');
+							$("#dynamic-modal").modal({show:true});
+						}, 1000);
+						setTimeout(function(){
+							$("body").mLoading("hide");
+							window.location.href = "<?php echo $this->config->base_url().'dashboard/monitor';?>";
+						}, 4000);
+					}
+					else
+					{
+						setTimeout(function(){
+							$("body").mLoading("hide");
+							alert(result.message);
+							return false;
+						}, 1000);
+					}
+				}, 'json');
+			}
 		});
 		
 		$(document).on("click",".money-button",function(){
@@ -886,7 +734,7 @@
 						<button type="button" class="money-button2 btn btn-warning" amount="0">Reset</button>\
 					</div>\
 					<div class="col-lg-6">\
-						<button type="button" class="mrci-button btn btn-success">Movie Room Check-In</button>\
+						<button type="submit" class="mrci-button btn btn-success">Movie Room Check-In</button>\
 						<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>\
 					</div>\
 				</div>\
@@ -902,25 +750,7 @@
 					$("#dynamic-modal-footer").html('');
 					$("#dynamic-modal").modal({show:true});
 					
-					$(document).on("click",".mrci-button",function(){
-						if(!confirm('Please confirm the inputted data!')){
-							return false;
-						}
-						
-						var no_of_person = $("#no_of_person").val();
-						if(no_of_person<=0){
-							alert("No. of Person value must not be zero.");
-							return false;
-						}
-						var change = $("#change").val();
-						if(change<0){
-							alert("Money must be greater than or equal to Total.");
-							return false;
-						}
-						
-						$('#movie_room_form').submit();
-					});
-					
+					/*
 					$('#movie_room_form')
 					.bootstrapValidator({
 						message: 'This value is not valid',
@@ -1008,7 +838,7 @@
 						}, 'json');
 						
 						e.stopImmediatePropagation();
-					});
+					});*/
 				}, 1000);
 				
 				// $(document).on("click",".money-button1",function(){
@@ -1050,6 +880,66 @@
 				// });
 				
 			}, 'json');
+		});
+		
+		$("#dynamic-modal-body").on('submit', '#movie_room_form', function(e) {
+			e.preventDefault();
+
+			var no_of_person = $("#no_of_person").val();
+			
+			if(no_of_person<=0){
+				alert("No. of Person value must not be zero.");
+				return false;
+			}
+			var change = $("#change").val();
+			if(change<0){
+				alert("Money must be greater than or equal to Total.");
+				return false;
+			}
+			
+			if(!confirm('Please confirm the inputted data!')){
+				return false;
+			}
+			else {
+				// Get the form instance
+				var $form = $(e.target);
+				
+				$("body").mLoading();
+				
+				$.post($form.attr('action'), $form.serialize(), function(result) {
+					if(result.error == 0)
+					{
+						$("#dynamic-modal").modal("hide");
+						
+						setTimeout(function(){
+							$("body").mLoading("hide");
+							$("#dynamic-modal-title").html('Success Message');
+							$("#dynamic-modal-body").html('<div class="alert alert-success"><strong>Attention!</strong> '+result.message+'</div>');
+							$("#dynamic-modal-footer").html('<button type="button" class="btn btn-danger" data-dismiss="modal">Ok</button>');
+							$("#dynamic-modal").modal({show:true});
+						}, 1000);
+						setTimeout(function(){
+							$("body").mLoading("hide");
+							window.location.href = "<?php echo $this->config->base_url().'dashboard/monitor';?>";
+						}, 4000);
+					}
+					else
+					{
+						setTimeout(function(){
+							$("body").mLoading("hide");
+							alert(result.message);
+							return false;
+						}, 1000);
+						// setTimeout(function(){
+							// $("body").mLoading("hide");
+							// $("#dynamic-modal-title").html('Error Message');
+							// $("#dynamic-modal-body").html('<div class="alert alert-warning"><strong>Attention!</strong> '+result.message+'</div>');
+							// $("#dynamic-modal-footer").html('<button type="button" class="btn btn-danger" data-dismiss="modal">Ok</button>');
+							// $("#dynamic-modal").modal({show:true});
+						// }, 1000);
+					}
+				}, 'json');
+			}
 		});
 		
 		$(document).on("click",".money-button2",function(){
@@ -1152,276 +1042,241 @@
 		
 		<!-------------------------SNACKS BAR FORM----------------------------->
 	var search_form = '';
-	<?php if($this->session->userdata('role')==1 OR $this->session->userdata('role')==2): ?>
+	<?php //if($this->session->userdata('role')==1 OR $this->session->userdata('role')==2): ?>
 		var search_form = '\
 			<div class="row">\
-				<div class="col-lg-2">\
-					<label>Order No. :</label>\
-				</div>\
-				<div class="col-lg-4">\
-					<input type="number" class="form-control" name="search_order_no" id="search_order_no" onClick="this.select();">\
-				</div>\
-				<div class="col-lg-6">\
-					<button type="button" id="search_snack_bar" class="btn btn-default">Search</button>\
-				</div>\
-			</div><br>\
-		';
-	<?php endif; ?>
-	var cart_items = 1;
-		$(document).on("click","#snacks-bar-window",function(){
-			$("body").mLoading();
-			
-			$.get("<?php echo $this->config->base_url().'dashboard/get_products';?>",function(result){
-				// console.log(result);
-				var snacks_bar_form = '\
-				<form id="snacks_bar_form" method="post" action="<?php echo $this->config->base_url().'dashboard/snacks_bar_transaction';?>">'+search_form+'\
-				<div id="order_no_search_form">\
-				<div class="order_no_search_form row">\
-					<div class="col-lg-12">\
-						'+result.draw_products+'\
-					</div>\
-				</div>\
-				<div class="order_no_search_form row">\
+				<form id="search_snack_bar_form">\
 					<div class="col-lg-2">\
 						<label>Order No. :</label>\
 					</div>\
 					<div class="col-lg-4">\
-						<input type="number" class="form-control" id="order_no" name="order_no" value="'+result.order_no+'" readonly/>\
-					</div>\
-				</div>\
-				<div class="order_no_search_form row">\
-					<div class="col-lg-2">\
-						<label>Type :</label>\
-					</div>\
-					<div class="col-lg-4">\
-						<select class="form-control" id="snacks_type" name="snacks_type"><option value="room">Room</option><option value="take out">Take Out</option></select>\
-					</div>\
-				</div>\
-				<div class="order_no_search_form row" id="rooms_selectbox">\
-					<div class="col-lg-2">\
-						<label>Room :</label>\
-					</div>\
-					<div class="col-lg-4">\
-						'+result.rooms_selectbox+'\
-					</div>\
-				</div>\
-				<div class="order_no_search_form row">\
-					<div class="col-lg-12">\
-						<table class="table" id="add-to-cart-table">\
-							<thead>\
-							<tr>\
-								<th>Product</th>\
-								<th>Price</th>\
-								<th>Quantity</th>\
-								<th>Subtotal</th>\
-								<th>Remove</th>\
-							</tr>\
-							</thead>\
-						</table>\
-					</div>\
-				</div>\
-				<div class="order_no_search_form row">\
-					<div class="col-lg-1">\
-						<button type="button" class="money-button11 btn btn-default" amount="1">1</button>\
-					</div>\
-					<div class="col-lg-1">\
-						<button type="button" class="money-button11 btn btn-default" amount="5">5</button>\
-					</div>\
-					<div class="col-lg-1">\
-						<button type="button" class="money-button11 btn btn-default" amount="10">10</button>\
-					</div>\
-					<div class="col-lg-1">\
-						<button type="button" class="money-button11 btn btn-default" amount="20">20</button>\
-					</div>\
-					<div class="col-lg-1">\
-						<button type="button" class="money-button11 btn btn-default" amount="50">50</button>\
-					</div>\
-					<div class="col-lg-1">\
-						<button type="button" class="money-button11 btn btn-default" amount="100">100</button>\
-					</div>\
-					<div class="col-lg-2">\
-						<label>Total :</label>\
-					</div>\
-					<div class="col-lg-4">\
-						<input class="form-control" name="total" id="snacks-total" value="0.00" readonly>\
-					</div>\
-					</div>\
-				</div>\
-				<div class="order_no_search_form row">\
-					<div class="col-lg-1">\
-						<button type="button" class="money-button11 btn btn-default" amount="200">200</button>\
-					</div>\
-					<div class="col-lg-1">\
-						<button type="button" class="money-button11 btn btn-default" amount="500">500</button>\
-					</div>\
-					<div class="col-lg-2">\
-						<button type="button" class="money-button11 btn btn-default" amount="1000">1000</button>\
-					</div>\
-					<div class="col-lg-2">\
-						<button type="button" class="money-button11 btn btn-warning" amount="0">Reset</button>\
-					</div>\
-					<div class="col-lg-2">\
-						<label>Money :</label>\
-					</div>\
-					<div class="col-lg-4">\
-						<input class="form-control" name="snacks_money" id="snacks_money" onClick="this.select();" value="0.00" readonly>\
-					</div>\
-				</div>\
-				<div class="order_no_search_form row">\
-					<div class="col-lg-6">\
-						<div class="form-group">\
-						</div>\
-					</div>\
-					<div class="col-lg-2">\
-						<label>Change :</label>\
-					</div>\
-					<div class="col-lg-4">\
-						<input class="form-control" name="change" id="snacks-change" value="0.00" readonly>\
-					</div>\
-				</div><br>\
-				<div class="order_no_search_form row">\
-					<div class="col-lg-6">\
-						<div class="form-group">\
-						</div>\
+						<input type="number" class="form-control" name="search_order_no" id="search_order_no" autofocus onClick="this.select();">\
 					</div>\
 					<div class="col-lg-6">\
-						<button type="button" class="co-button btn btn-success">Check-Out</button>\
-						<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>\
+						<button type="submit" id="search_snack_bar" class="btn btn-default">Search</button>\
 					</div>\
-				</div>\
-				</div>\
 				</form>\
-				';
+			</div><br>\
+		';
+	<?php //endif; ?>
+	var cart_items = 1;
+		$(document).on("click","#snacks-bar-window",function(){
+		var user_role = "<?php echo $this->session->userdata('role'); ?>";
+		
+			$("body").mLoading();
+			var snacks_bar_form = '';
+			
+			// if user role is not snackbar
+			if (user_role != 3) {
+				$.get("<?php echo $this->config->base_url().'dashboard/get_products';?>",function(result){
+					snacks_bar_form = search_form + '\
+					<form id="snacks_bar_form" method="post" action="<?php echo $this->config->base_url().'dashboard/snacks_bar_transaction';?>">\
+					<div id="order_no_search_form">\
+					<div class="order_no_search_form row">\
+						<div class="col-lg-12">\
+							'+result.draw_products+'\
+						</div>\
+					</div>\
+					<div class="order_no_search_form row">\
+						<div class="col-lg-2">\
+							<label>Order No. :</label>\
+						</div>\
+						<div class="col-lg-4">\
+							<input type="number" class="form-control" id="order_no" name="order_no" value="'+result.order_no+'" readonly/>\
+						</div>\
+					</div>\
+					<div class="order_no_search_form row">\
+						<div class="col-lg-2">\
+							<label>Type :</label>\
+						</div>\
+						<div class="col-lg-4">\
+							<select class="form-control" id="snacks_type" name="snacks_type"><option value="room">Room</option><option value="take out">Take Out</option></select>\
+						</div>\
+					</div>\
+					<div class="order_no_search_form row" id="rooms_selectbox">\
+						<div class="col-lg-2">\
+							<label>Room :</label>\
+						</div>\
+						<div class="col-lg-4">\
+							'+result.rooms_selectbox+'\
+						</div>\
+					</div>\
+					<div class="order_no_search_form row">\
+						<div class="col-lg-12">\
+							<table class="table" id="add-to-cart-table">\
+								<thead>\
+								<tr>\
+									<th>Product</th>\
+									<th>Price</th>\
+									<th>Quantity</th>\
+									<th>Subtotal</th>\
+									<th>Remove</th>\
+								</tr>\
+								</thead>\
+							</table>\
+						</div>\
+					</div>\
+					<div class="order_no_search_form row">\
+						<div class="col-lg-1">\
+							<button type="button" class="money-button11 btn btn-default" amount="1">1</button>\
+						</div>\
+						<div class="col-lg-1">\
+							<button type="button" class="money-button11 btn btn-default" amount="5">5</button>\
+						</div>\
+						<div class="col-lg-1">\
+							<button type="button" class="money-button11 btn btn-default" amount="10">10</button>\
+						</div>\
+						<div class="col-lg-1">\
+							<button type="button" class="money-button11 btn btn-default" amount="20">20</button>\
+						</div>\
+						<div class="col-lg-1">\
+							<button type="button" class="money-button11 btn btn-default" amount="50">50</button>\
+						</div>\
+						<div class="col-lg-1">\
+							<button type="button" class="money-button11 btn btn-default" amount="100">100</button>\
+						</div>\
+						<div class="col-lg-2">\
+							<label>Total :</label>\
+						</div>\
+						<div class="col-lg-4">\
+							<input class="form-control" name="total" id="snacks-total" value="0.00" readonly>\
+						</div>\
+						</div>\
+					</div>\
+					<div class="order_no_search_form row">\
+						<div class="col-lg-1">\
+							<button type="button" class="money-button11 btn btn-default" amount="200">200</button>\
+						</div>\
+						<div class="col-lg-1">\
+							<button type="button" class="money-button11 btn btn-default" amount="500">500</button>\
+						</div>\
+						<div class="col-lg-2">\
+							<button type="button" class="money-button11 btn btn-default" amount="1000">1000</button>\
+						</div>\
+						<div class="col-lg-2">\
+							<button type="button" class="money-button11 btn btn-warning" amount="0">Reset</button>\
+						</div>\
+						<div class="col-lg-2">\
+							<label>Money :</label>\
+						</div>\
+						<div class="col-lg-4">\
+							<input class="form-control" name="snacks_money" id="snacks_money" onClick="this.select();" value="0.00" readonly>\
+						</div>\
+					</div>\
+					<div class="order_no_search_form row">\
+						<div class="col-lg-6">\
+							<div class="form-group">\
+							</div>\
+						</div>\
+						<div class="col-lg-2">\
+							<label>Change :</label>\
+						</div>\
+						<div class="col-lg-4">\
+							<input class="form-control" name="change" id="snacks-change" value="0.00" readonly>\
+						</div>\
+					</div><br>\
+					<div class="order_no_search_form row">\
+						<div class="col-lg-6">\
+							<div class="form-group">\
+							</div>\
+						</div>\
+						<div class="col-lg-6">\
+							<button type="submit" class="co-button btn btn-success">Check-Out</button>\
+							<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>\
+						</div>\
+					</div>\
+					</div>\
+					</form>\
+					';
+				}, 'json');
+			}
+			else {
+				snacks_bar_form = search_form+ '\
+					<form>\
+						<div id="order_no_search_form">\
+						</div>\
+					</form>\
+					';
+			}
+			
+			setTimeout(function(){
+				$("body").mLoading("hide");
+				$("#dynamic-modal-title").html('Snack Bar');
+				$("#dynamic-modal-body").html(snacks_bar_form);
+				$("#dynamic-modal-footer").html('');
+				$("#dynamic-modal").modal({show:true});
 				
-				setTimeout(function(){
-					$("body").mLoading("hide");
-					$("#dynamic-modal-title").html('Snack Bar');
-					$("#dynamic-modal-body").html(snacks_bar_form);
-					$("#dynamic-modal-footer").html('');
-					$("#dynamic-modal").modal({show:true});
-					
-					$(document).on("click",".co-button",function(){
-						if(!confirm('Please confirm the inputted data!')){
-							return false;
-						}
-						
-						var snacks_total = parseFloat($("#snacks-total").val());
-						if(snacks_total<=0){
-							alert("Total must not be zero.");
-							return false;
-						}
-						
-						var snacks_money = parseFloat($("#snacks_money").val());
-						if(snacks_money<=0){
-							alert("Money must not be zero.");
-							return false;
-						}
-						var change = $("#snacks-change").val();
-						if(change<0){
-							alert("Money must be greater than or equal to Total.");
-							return false;
-						}
-						
-						$('#snacks_bar_form').submit();
-					});
-					
-					$('#snacks_bar_form')
-					.bootstrapValidator({
-						message: 'This value is not valid',
-						feedbackIcons: {
-							valid: 'glyphicon glyphicon-ok',
-							invalid: 'glyphicon glyphicon-remove',
-							validating: 'glyphicon glyphicon-refresh'
-						},
-						fields: {
-							snacks_money: {
-								validators: {
-									notEmpty: {
-										message: 'Money is required'
-									}
-								}
-							}
-						}
-					})
-					.on('success.form.bv', function(e,data) {
-						// Prevent form submission
-						e.preventDefault();
-
-						// Get the form instance
-						var $form = $(e.target);
-
-						// Get the BootstrapValidator instance
-						var bv = $form.data('bootstrapValidator');
-						
-						$("#dynamic-modal").modal("hide");
-						$("body").mLoading();
-						
-						$.post($form.attr('action'), $form.serialize(), function(result) {
-							if(result.error == 0)
-							{
-								setTimeout(function(){
-									$("body").mLoading("hide");
-									$("#dynamic-modal-title").html('Success Message');
-									$("#dynamic-modal-body").html('<div class="alert alert-success"><strong>Attention!</strong> '+result.message+'</div>');
-									$("#dynamic-modal-footer").html('<button type="button" class="btn btn-danger" data-dismiss="modal">Ok</button>');
-									$("#dynamic-modal").modal({show:true});
-								}, 1000);
-								setTimeout(function(){
-									$("body").mLoading("hide");
-									window.location.href = "<?php echo $this->config->base_url().'dashboard/monitor';?>";
-								}, 4000);
-							}
-							else
-							{
-								setTimeout(function(){
-									$("body").mLoading("hide");
-									$("#dynamic-modal-title").html('Error Message');
-									$("#dynamic-modal-body").html('<div class="alert alert-warning"><strong>Attention!</strong> '+result.message+'</div>');
-									$("#dynamic-modal-footer").html('<button type="button" class="btn btn-danger" data-dismiss="modal">Ok</button>');
-									$("#dynamic-modal").modal({show:true});
-								}, 1000);
-							}
-						}, 'json');
-						
-						e.stopImmediatePropagation();
-					});
-				}, 1000);
-				
-				// $(document).on("click",".money-button11",function(){
-					// var money = parseFloat($("#snacks_money").val());
-					// var amount = parseFloat($(this).attr("amount"));
-					
-					// var total = money+amount;
-					// if(amount==0)
-						// total = 0;
-					
-					// $("#snacks_money").val(total);
-					
-					// var money = parseFloat($("#snacks_money").val());
-					// var total = parseFloat($("#snacks-total").val());
-					
-					
-					// if(isNaN(money)){
-						// $("#snacks_money").val('0.00');
-						// money = parseFloat($("#snacks_money").val());
-					// }
-					
-					// var change = money-total;
-						
-					// $("#snacks-change").val(change);
-				// });
-				
-				// $(document).on("change","#snacks_type",function(){
-					// if(this.value!='room'){
-						// $("#rooms_selectbox").hide();
-					// }else{
-						// $("#rooms_selectbox").show();
-					// }
-				// });
-				
-			}, 'json');
+				$('#dynamic-modal').on('shown.bs.modal', function() {
+					$('#room').focus();
+				});
+			}, 1000);
 		});
 		
+		$("#dynamic-modal-body").on('submit', '#snacks_bar_form', function(e, data) {
+			e.preventDefault();
+			
+			// validate if user selected a room number when selecting room as type
+			if ($('#snacks_type').val() == 'room') {
+				if ($('#room').val() == 0) {
+					alert('Please select a room number.');
+					return false;
+				}
+			}
+			
+			var snacks_total = parseFloat($("#snacks-total").val());
+			if(snacks_total<=0){
+				alert("Total must not be zero.");
+				return false;
+			}
+			
+			var snacks_money = parseFloat($("#snacks_money").val());
+			if(snacks_money<=0){
+				alert("Money must not be zero.");
+				return false;
+			}
+			
+			var change = $("#snacks-change").val();
+			if(change<0){
+				alert("Money must be greater than or equal to Total.");
+				return false;
+			}
+			
+			if(!confirm('Please confirm the inputted data!')){
+				return false;
+			}
+			else {
+				var $form = $(e.target);
+				
+				$("#dynamic-modal").modal("hide");
+				$("body").mLoading();
+				
+				$.post($form.attr('action'), $form.serialize(), function(result) {
+					if(result.error == 0) {
+						setTimeout(function(){
+							$("body").mLoading("hide");
+							$("#dynamic-modal-title").html('Success Message');
+							$("#dynamic-modal-body").html('<div class="alert alert-success"><strong>Attention!</strong> '+result.message+'</div>');
+							$("#dynamic-modal-footer").html('<button type="button" class="btn btn-danger" data-dismiss="modal">Ok</button>');
+							$("#dynamic-modal").modal({show:true});
+						}, 1000);
+						setTimeout(function(){
+							$("body").mLoading("hide");
+							window.location.href = "<?php echo $this->config->base_url().'dashboard/monitor';?>";
+						}, 4000);
+					}
+					else {
+						setTimeout(function(){
+							$("body").mLoading("hide");
+							$("#dynamic-modal-title").html('Error Message');
+							$("#dynamic-modal-body").html('<div class="alert alert-warning"><strong>Attention!</strong> '+result.message+'</div>');
+							$("#dynamic-modal-footer").html('<button type="button" class="btn btn-danger" data-dismiss="modal">Ok</button>');
+							$("#dynamic-modal").modal({show:true});
+						}, 1000);
+					}
+				}, 'json');
+			}
+		});
+					
 		$(document).on("click",".money-button11",function(){
 			var money = parseFloat($("#snacks_money").val());
 			var amount = parseFloat($(this).attr("amount"));
@@ -1448,6 +1303,7 @@
 		
 		$(document).on("change","#snacks_type",function(){
 			if(this.value!='room'){
+				$("#room").val('');
 				$("#rooms_selectbox").hide();
 			}else{
 				$("#rooms_selectbox").show();
@@ -1602,9 +1458,11 @@
 			event.stopImmediatePropagation();
 		});
 		
-		$(document).on("click","#search_snack_bar",function(){
+		$("#dynamic-modal-body").on('submit', '#search_snack_bar_form', function(e) {
+			e.preventDefault();
 			var search_order_no = $("#search_order_no").val();
-			
+			$('#search_order_no').focus();
+
 			if(search_order_no!=''){
 			$("body").mLoading();
 			$.get("<?php echo $this->config->base_url().'dashboard/search_order_no';?>/"+search_order_no,function(result){

@@ -22,11 +22,13 @@ class Snack_bar_transaction_model extends CI_Model
 		$cart_price = $this->input->post('cart_price');
 		$cart_quantity = $this->input->post('cart_quantity');
 		$cart_subtotal = $this->input->post('cart_subtotal');
+		$date_today = date('Y-m-d');
 		
 		foreach($cart_product_id as $key => $val){
 			$insert_data = array(
 				'order_no' => $order_no,
 				'product_id' => $val,
+				'date_created' => $date_today,
 				'price' => $cart_price[$key],
 				'quantity' => $cart_quantity[$key],
 				'subtotal' => $cart_subtotal[$key],
@@ -83,20 +85,22 @@ class Snack_bar_transaction_model extends CI_Model
 	}
 	
 	function get_order_header2($order_no){
-		$query = "SELECT order_type,total,money,money_change FROM snack_bar_transactions_header WHERE order_no=".$order_no." AND deleted=0 AND paid=0";
+		// $query = "SELECT order_type,total,money,money_change,room FROM snack_bar_transactions_header WHERE order_no=".$order_no." AND datetime_created LIKE '" . date('Y-m-d'). "%' AND deleted=0 AND paid=1";
+		// return only snackbar orders that are less than 1 hour old after cashier made the transaction
+		$query = "SELECT order_type,total,money,money_change,room FROM `snack_bar_transactions_header` where order_no=".$order_no." AND datetime_created like '" . date('Y-m-d'). "%' and TIMESTAMPDIFF(HOUR, datetime_created, NOW()) < 1";
 		
 		return $this->db->query($query)->row();
 	}
 	
-	function get_order_header3($order_no){
+	function get_order_header3($id){
 		$query = "SELECT a.order_no, a.order_type, a.datetime_created, a.created_by, a.datetime_updated, a.updated_by, a.total, a.money, a.money_change, a.paid, b.name AS room_name FROM snack_bar_transactions_header AS a 
 			LEFT JOIN rooms AS b ON a.room=b.id 
-		WHERE a.order_no=".$order_no." AND a.deleted=0";
+		WHERE a.id=".$id." AND a.deleted=0";
 		
 		return $this->db->query($query)->row();
 	}
 	
-	function get_order_detail($order_no){
+	function get_order_detail2($order_no){
 		$query = "SELECT a.price,a.quantity,a.subtotal,b.name AS product_name FROM snack_bar_transactions_detail AS a 
 			LEFT JOIN products AS b ON a.product_id=b.id 
 		WHERE a.order_no=".$order_no." AND a.deleted=0";
@@ -104,7 +108,13 @@ class Snack_bar_transaction_model extends CI_Model
 		return $this->db->query($query)->result();
 	}
 	
-	
+	function get_order_detail($order_no){
+		$query = "SELECT a.price,a.quantity,a.subtotal,b.name AS product_name FROM snack_bar_transactions_detail AS a 
+			LEFT JOIN products AS b ON a.product_id=b.id 
+		WHERE a.order_no=".$order_no." AND a.date_created = '" . date('Y-m-d') . "' AND a.deleted=0";
+		
+		return $this->db->query($query)->result();
+	}
 	
 	
 	

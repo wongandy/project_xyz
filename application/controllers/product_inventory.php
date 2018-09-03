@@ -175,7 +175,7 @@ class Product_inventory extends CI_Controller {
 				  }
 					$details .= '</div>';
 					
-					$div_draw .= '<p><a href="#" class="view-detail" detail="'.$details.'">View Details</a></p>';
+					$div_draw .= '<p><a href="javascript:void(0)" class="view-detail" detail="'.$details.'">View Details</a></p>';
 				}
 					
 				// if(!empty($pi_result[$day_][$val->id])){

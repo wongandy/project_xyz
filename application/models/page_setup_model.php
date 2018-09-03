@@ -28,4 +28,7 @@ class Page_setup_model extends CI_Model
 		}
 	}
 	
+	function update_page_setup($update_data = ''){
+		$this->db->update($this->tbl_name, $update_data, array('id' => 1));
+	}
 }

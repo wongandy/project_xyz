@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $row->page_name; ?> | Snack Bar Transactions</title>
+    <title><?php echo $row->page_name; ?> | Settings</title>
     <!-- Core CSS - Include with every page -->
     <link href="<?php echo $this->config->base_url().'chemicals/';?>assets/plugins/bootstrap/bootstrap.css" rel="stylesheet" />
     <link href="<?php echo $this->config->base_url().'chemicals/';?>assets/font-awesome/css/font-awesome.css" rel="stylesheet" />
@@ -12,8 +12,6 @@
     <link href="<?php echo $this->config->base_url().'chemicals/';?>assets/css/main-style.css" rel="stylesheet" />
     <!-- Page-Level CSS -->
     <link href="<?php echo $this->config->base_url().'chemicals/';?>assets/plugins/morris/morris-0.4.3.min.css" rel="stylesheet" />
-	<!-- Validator -->
-    <link href="<?php echo $this->config->base_url().'chemicals/';?>assets/css/bootstrapValidator.css" rel="stylesheet">
 	<!-- DataTables CSS -->
     <link href="<?php echo $this->config->base_url().'chemicals/';?>assets/css/dataTables.bootstrap.css" rel="stylesheet">
     <link href="<?php echo $this->config->base_url().'chemicals/';?>assets/TableTools-2.2.3/css/dataTables.tableTools.css" rel="stylesheet">
@@ -76,39 +74,47 @@
             <div class="row">
                 <!-- Page Header -->
                 <div class="col-lg-12">
-                    <h1 class="page-header">Snack Bar Transactions</h1>
+                    <h1 class="page-header">Settings</h1>
                 </div>
                 <!--End Page Header -->
             </div>
 			
-			<div class="row">
-                <!-- Page Header -->
-				<div class="col-lg-6">
+			<form id="settings_form" method="post" action="<?php echo $this->config->base_url().'settings/update_page_setup'; ?>">	
+				<div class="row">
 					<div class="form-group">
-						<label>Date :</label>
-						<input type="date" class="form-control" id="date_from" name="date_from" onChange="movie_room_transaction_table();" value="<?php echo date('Y-m-d');?>"/>
+						<label for="name" class="col-lg-4">Per person price</label>
+						<div class="col-lg-6">
+							<input type="number" class="form-control" name="per_person_price" id="per_person_price" value="<?php echo $row->per_person_price;?>">
+						</div>
+					
+						<label for="name" class="col-lg-4">Corkage price</label>
+						<div class="col-lg-6">
+							<input type="number" class="form-control" name="corkage_price" id="corkage_price"  value="<?php echo $row->corkage_price;?>">
+						</div>
+					
+						<label for="name" class="col-lg-4">Vacant hours (in minutes)</label>
+						<div class="col-lg-6">
+							<input type="number" class="form-control" name="vacant_hours" id="vacant_hours"  value="<?php echo $row->vacant_hours; ?>">
+						</div>
+					
+						<label for="name" class="col-lg-4">Allowed idle minutes</label>
+						<div class="col-lg-6">
+							<input type="number" class="form-control" name="allowed_idle_mins" id="allowed_idle_mins"  value="<?php echo $row->allowed_idle_mins;?>">
+						</div>
 					</div>
 				</div>
-				<!--div class="col-lg-6">
-					<div class="form-group">
-						<label>Date To :</label>
-						<input type="date" class="form-control" id="date_to" name="date_to" onChange="movie_room_transaction_table();" value="<?php echo date('Y-m-d');?>"/>
+				
+				<div class="row">
+					<div class="col-lg-2">
+						<button type="submit" name="test" class="btn btn-success">Update</button>
 					</div>
-				</div-->
-			</div>
-			<div class="row">
-                <div id="movie-room-transaction-table"></div>
-                <!--End Page Header -->
-            </div>
-
+				</div>
+			</form>
         </div>
         <!-- end page-wrapper -->
-
     </div>
     <!-- end wrapper -->
 	
-	<input type="hidden" id="per_person_price" value="<?php echo $row->per_person_price; ?>"/>
-	<input type="hidden" id="corkage_price" value="<?php echo $row->corkage_price; ?>"/>
 	<!-- Modal -->
 	<div id="dynamic-modal" class="modal fade" role="dialog">
 	  <div class="modal-dialog">
@@ -124,34 +130,10 @@
 			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 		  </div>
 		</div>
-
 	  </div>
 	</div>
 	
-	<!---ROTATE HEADER SAMPLE CSS---->
-	<style>
-		th{
-			text-align:center;
-		}
-		th.rotate {
-		  /* Something you can count on */
-		  height: 140px;
-		  white-space: nowrap;
-		}
-
-		th.rotate > div {
-		  transform: 
-			/* Magic Numbers */
-			translate(25px, 51px)
-			/* 45 is really 360 - 45 */
-			rotate(315deg);
-		  width: 30px;
-		}
-		th.rotate > div > span {
-		  border-bottom: 1px solid #ccc;
-		  padding: 5px 10px;
-		}
-	</style>
+	
 
     <!-- Core Scripts - Include with every page -->
     <script src="<?php echo $this->config->base_url().'chemicals/';?>assets/plugins/jquery-1.10.2.js"></script>
@@ -171,41 +153,35 @@
 	<script src="<?php echo $this->config->base_url().'chemicals/';?>assets/scripts/bootstrapValidator.js"></script>
 	<!-- Spinner JS -->
 	<script src="<?php echo $this->config->base_url().'chemicals/';?>assets/scripts/jquery.mloading.js"></script>
-
+	
 	<script>
-	function edit_this(theid, order_no){
-		$("body").mLoading();
-		
-		$.get("<?php echo $this->config->base_url().'snack_bar_transaction/get_snack_bar_detail';?>/"+theid+"/"+order_no,function(result){
-		
-		console.log(result);
-		
-		setTimeout(function(){
-			$("body").mLoading("hide");
-			$("#dynamic-modal-title").html('Snack Bar Transaction Detail');
-			$("#dynamic-modal-body").html(result.html_draw);
-			$("#dynamic-modal-footer").html('');
-			$("#dynamic-modal").modal({show:true});
-		}, 1000);
-		
-		}, 'json');
-	}
-	
-	function movie_room_transaction_table(){
-		var date_from = $("#date_from").val();
-		var date_to = $("#date_to").val();
-		
-		$.post("<?php echo $this->config->base_url().'snack_bar_transaction/reload_table'?>",{date_from:date_from, date_to:date_to},function(result){
-			console.log(result);
-			$("#movie-room-transaction-table").html(result.table_draw);
-		}, 'json');
-	}
-	
-	$(document).ready(function(){
-		movie_room_transaction_table();
+	$(document).on('ready', function() {
+		$('#settings_form').on('submit', function(e) {
+			e.preventDefault();
+
+			var error = '';
+			
+			$('input[type="number"]').each(function() {
+				if ($.trim($(this).val()) == '') {
+					error+=1;
+				}
+			});
+			
+			if (error>=1) {
+				alert('Please input all fields.');
+			}
+			else {
+				var $form = $(e.target);
+				
+				$.post($form.attr('action'), $form.serialize(), function(result) {
+					console.log(result);
+				}, 'json');
+				
+				alert('Settings updated!');
+			}
+		});
 	});
 	</script>
-
 </body>
 
 </html>

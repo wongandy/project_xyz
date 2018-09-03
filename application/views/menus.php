@@ -45,6 +45,9 @@
 		<li <?php echo ($menu_id==9?'class="selected"':''); ?> >
 			<a href="<?php echo $this->config->base_url().'reports';?>"><i class="fa fa-dashboard fa-fw"></i>Report</a>
 		</li>
+		<li <?php echo ($menu_id==10?'class="selected"':''); ?> >
+			<a href="<?php echo $this->config->base_url().'settings';?>"><i class="fa fa-dashboard fa-fw"></i>Settings</a>
+		</li>
 		<?php endif;?>
 	</ul>
 	<!-- end side-menu -->
