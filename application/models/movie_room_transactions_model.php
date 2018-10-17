@@ -156,6 +156,12 @@ class Movie_room_transactions_model extends CI_Model
 		return $this->db->query($query)->row();
 	}
 	
+	function get_reserved_detail($id){
+		$query = "SELECT * FROM movie_room_transactions WHERE id=".$id;
+		
+		return $this->db->query($query)->row();
+	}
+	
 	function have_advanced_reservation($check_in,$room_id){
 		$query = "SELECT id FROM movie_room_transactions WHERE check_in>='".$check_in."' AND deleted=0 AND done=0 AND room_id=".$room_id;
 		
@@ -165,6 +171,28 @@ class Movie_room_transactions_model extends CI_Model
 			return true;
 		else
 			return false;
+	}
+	
+	function have_other_advanced_reservation($check_in, $id, $room_id){
+		$query = "SELECT * FROM movie_room_transactions WHERE check_in>='" . $check_in . "' AND deleted=0 AND done=0 AND room_id=" . $id . " AND id !=" . $room_id;
+		
+		$row = $this->db->query($query)->row();
+		
+		if(!empty($row))
+			return true;
+		else
+			return false;
+	}
+	
+	function update_reservation_without_title($id, $movie_id, $check_in_time, $check_out_time) {
+		$data = array(
+			'movie_id' => $movie_id,
+			'check_in' => $check_in_time,
+			'check_out' => $check_out_time
+		);
+
+		$this->db->where('id', $id);
+		$this->db->update($this->tbl_name, $data);
 	}
 	
 	function delete_after_checkin_vrs($check_in,$room_id){
