@@ -40,7 +40,7 @@ if($this->session->userdata('role')!= 3):
 					$active2 = '<span class="panel-eyecandy-title" style="color: black;font-weight: bold;" font-size:12px;">'.$theValues[4].'</span>';
 				
 				echo '
-					<a href="javascript:void(0)" id="additional-person" room_id="'.$room_val->id.'" check_in="'.date('h|i|a', strtotime($theValues[2])).'" mrt_id="'.$theValues[0].'" current_person="'.$theValues[1].'" room_name="'.$room_val->name.'" movie_name="'.$theValues[4].'">
+					<a href="javascript:void(0)" id="additional-person" room_id="'.$room_val->id.'" check_in_time = "' . date('h:i a', strtotime($theValues[2])) . '" check_in="'.date('h|i|a', strtotime($theValues[2])).'" mrt_id="'.$theValues[0].'" current_person="'.$theValues[1].'" room_name="'.$room_val->name.'" movie_name="'.$theValues[4].'">
 					<div class="panel panel-primary text-center no-boder" style="width:70px;">
 						<div class="panel-body '.($theValues[1]==0?($vacant_near_end_id==$theValues[0]?'yellow':'white'):($room_near_end_id==$theValues[0]?'red':'blue')).'">
 							

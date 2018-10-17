@@ -61,6 +61,19 @@ class Dashboard extends CI_Controller {
 		echo json_encode($result);
 	}
 	
+	public function get_movie_titles() {
+		$movies = $this->movies->get_active_movies();
+		$movies_selectbox = '<select class="form-control" id="movie" name="movie">';
+		
+		foreach($movies as $key => $val){
+			$movies_selectbox .= '<option value="'.$val->id.'|||'.$val->duration.'">'.$val->name.'</option>';
+		}
+		$movies_selectbox .= '</select>';
+		
+		$result['movies_selectbox'] = $movies_selectbox;
+		echo json_encode($result, true);
+	}
+	
 	public function get_rooms_movies2(){
 		$room_id = $this->input->post('room_id');
 		$check_in = $this->input->post('check_in');
@@ -179,6 +192,83 @@ class Dashboard extends CI_Controller {
 		// $result['table_draw'] = $this->load->view('dashboard_table_result', $data, true);
 		
 		echo json_encode($result);
+	}
+	
+	public function movie_title_select() {
+		$id = $this->input->post('id');
+		$vh_explode = explode(":",$this->input->post("vacant_hours"));
+		$vh_h = $vh_explode[0]*3600;
+		$vh_m = $vh_explode[1]*60;
+		$vh_total = $vh_h+$vh_m;
+		$allowed_idle_mins = $this->input->post("allowed_idle_mins")*60;
+		$room_id = $this->input->post("room_id");
+		$movie_explode = explode("|||",$this->input->post("movie"));
+		
+		$movie_id = $movie_explode[0];
+		$movie_duration = $movie_explode[1];
+		
+		$md_explode = explode(":",$movie_duration);
+		$md_hour = (integer) $md_explode[0]*3600;
+		$md_minute = (integer) $md_explode[1]*60;
+		$md_total = $md_hour+$md_minute;
+		
+		$hour = (integer) $md_explode[0] * 60;
+		$minutes = (integer) $md_explode[1];
+		$duration = ($hour + $minutes);
+		$check_in_time = date('Y-m-d H:i:s', strtotime($this->input->post("check_in_time")));
+		$check_out_time = date('Y-m-d H:i:s', strtotime('+' . $duration . ' minutes', strtotime($this->input->post("check_in_time"))));
+		
+		if ($this->movie_room_transactions->have_other_advanced_reservation($check_in_time, $room_id, $id)) {
+			$reserved_detail = $this->movie_room_transactions->get_reserved_detail($id);
+			
+			if(strtotime($check_in_time)>=strtotime($reserved_detail->check_in) AND strtotime($check_out_time)<=strtotime($reserved_detail->check_out)){
+				$this->movie_room_transactions->update_reservation_without_title($id, $movie_id, $check_in_time, $check_out_time);
+				$result['error'] = 0;
+				$result['message'] = 'Movie title selected successfully!';
+			}
+			else{
+				$result['error'] = 1;
+				$result['message'] = 'Movie room check in transactions failed. Movie duration exceeded to 2 hours.';
+			}
+		}
+		else {
+			// input title to movie reservation
+			$this->movie_room_transactions->update_reservation_without_title($id, $movie_id, $check_in_time, $check_out_time);
+			$this->movie_room_transactions->delete_after_checkin_vrs($check_in_time, $room_id);
+			
+			$next_day = date('d', strtotime(date('Y-m-d') .' +1 day'));
+			
+			for($x=0;$x<=10;$x++){
+				if ($x==0) {
+					$vacant_in = date('Y-m-d H:i:s', strtotime($check_out_time)+$allowed_idle_mins);
+					$vacant_out = date('Y-m-d H:i:s', strtotime($vacant_in)+$vh_total);
+				}
+				else {
+					$vacant_in = date('Y-m-d H:i:s', strtotime($vacant_out)+$allowed_idle_mins);
+					$vacant_out = date('Y-m-d H:i:s', strtotime($vacant_in)+$vh_total);
+				}
+			
+				$insert_datax = array(
+					'room_id' => $room_id,
+					'check_in' => $vacant_in,
+					'check_out' => $vacant_out,
+					'status' => 1,
+					'datetime_created' => date('Y-m-d H:i:s')
+				);
+				
+				$this->movie_room_transactions->insert_vrs($insert_datax);
+				
+				if(date('d', strtotime($vacant_in))==$next_day){
+					break;
+				}
+			}
+			
+			$result['error'] = 0;
+			$result['message'] = 'Movie title selected successfully!';
+		}
+		
+		echo json_encode($result, true);
+		exit;
 	}
 	
 	public function movie_room_check_in2($mrt_id=0){
@@ -363,7 +453,7 @@ class Dashboard extends CI_Controller {
 				$result['error'] = 0;
 				$result['vacant_in'] = $vacant_in;
 				$result['vacant_out'] = $vacant_out;
-				$result['message'] = 'Movie room check in transactions successfull.';
+				$result['message'] = 'Movie room check in transactions successful.';
 			}else{
 				$result['error'] = 1;
 				$result['message'] = 'Movie room check in transactions failed.';
@@ -422,7 +512,7 @@ class Dashboard extends CI_Controller {
 					
 					if($this->movie_room_transactions->insert_transaction($insert_data)){
 						$result['error'] = 0;
-						$result['message'] = 'Movie room check in transactions successfull.';
+						$result['message'] = 'Movie room check in transactions successful.';
 					}else{
 						$result['error'] = 1;
 						$result['message'] = 'Movie room check in transactions failed.';
@@ -504,7 +594,7 @@ class Dashboard extends CI_Controller {
 				
 				if($this->movie_room_transactions->insert_transaction($insert_data)){
 					$result['error'] = 0;
-					$result['message'] = 'Movie room check in transactions successfull.';
+					$result['message'] = 'Movie room check in transactions successful.';
 				}else{
 					$result['error'] = 1;
 					$result['message'] = 'Movie room check in transactions failed.';

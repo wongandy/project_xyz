@@ -172,115 +172,162 @@
 			var mrt_id = $(this).attr("mrt_id");
 			
 			var check_in = $(this).attr("check_in");
+			var check_in_time = $(this).attr("check_in_time");
 			var room_id = $(this).attr("room_id");
 			var corkage = <?php echo $row->corkage_price; ?>;
 			
 		  if(current_person!=0){//ADDITIONAL PERSON
-			
-			var additional_person_form = '\
-			<form id="additional_person_form" method="post" action="<?php echo $this->config->base_url().'dashboard/additional_person';?>/'+mrt_id+'">\
-				<div class="row">\
-					<div class="col-lg-6">\
-						<div class="form-group">\
-							<label>Movie :</label>\
-							<input class="form-control" value="'+movie_name+'" readonly/>\
+			if ($(this).attr("movie_name") == 'RESERVED') {
+				$.post("<?php echo $this->config->base_url().'dashboard/get_movie_titles';?>",function(result){
+					var movie_title_select_form = '\
+					<form id="movie_title_select" method="post" action="<?php echo $this->config->base_url().'dashboard/movie_title_select';?>/'+mrt_id+'">\
+						<div class="row">\
+							<div class="col-lg-4">\
+								<div class="form-group">\
+									<label>Check-in Time :</label>\
+									'+check_in_time+'\
+								</div>\
+							</div>\
+						</div>\
+						<div class="row">\
+							<div class="col-lg-4">\
+								<div class="form-group">\
+									<label>Movie :</label>\
+									'+result.movies_selectbox+'\
+								</div>\
+							</div>\
+						</div>\
+						</div>\
+						<div class="row">\
+							<div class="col-lg-4">\
+								<input type="hidden" id="id" name="id" value="'+mrt_id+'"/>\
+								<input type="hidden" id="room_id" name="room_id" value="'+room_id+'"/>\
+								<input type="hidden" id="check_in_time" name="check_in_time" value="'+check_in_time+'"/>\
+								<input type="hidden" id="vacant_hours" name="vacant_hours" value="<?php echo $row->vacant_hours; ?>"/>\
+								<input type="hidden" id="allowed_idle_mins" name="allowed_idle_mins" value="<?php echo $row->allowed_idle_mins; ?>"/>\
+								<button type="submit" class="as-button btn btn-success">Submit</button>\
+								<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>\
+							</div>\
+						</div>\
+						</form>\
+					';
+					
+					setTimeout(function(){
+						$("body").mLoading("hide");
+						$("#dynamic-modal-title").html('Select movie title for '+room_name);
+						$("#dynamic-modal-body").html(movie_title_select_form);
+						$("#dynamic-modal-footer").html('');
+						$('#movie option[value="99999|||2:00"]').remove();
+						$("#dynamic-modal").modal({show:true});
+					}, 1000);
+				}, 'json');
+			}
+			else {	
+				var additional_person_form = '\
+				<form id="additional_person_form" method="post" action="<?php echo $this->config->base_url().'dashboard/additional_person';?>/'+mrt_id+'">\
+					<div class="row">\
+						<div class="col-lg-6">\
+							<div class="form-group">\
+								<label>Movie :</label>\
+								<input class="form-control" value="'+movie_name+'" readonly/>\
+							</div>\
 						</div>\
 					</div>\
-				</div>\
-				<div class="row">\
-					<div class="col-lg-6">\
-						<div class="form-group">\
-							<label>Current No. of Person :</label>\
-							<input class="form-control" value="'+current_person+'" readonly/>\
+					<div class="row">\
+						<div class="col-lg-6">\
+							<div class="form-group">\
+								<label>Current No. of Person :</label>\
+								<input class="form-control" value="'+current_person+'" readonly/>\
+							</div>\
+						</div>\
+						<div class="col-lg-6">\
+							<div class="form-group">\
+								<label>Additional Person :</label>\
+								<input type="number" class="form-control" id="additional_person" name="additional_person" onClick="this.select();" value="0"/>\
+							</div>\
 						</div>\
 					</div>\
-					<div class="col-lg-6">\
-						<div class="form-group">\
-							<label>Additional Person :</label>\
-							<input type="number" class="form-control" id="additional_person" name="additional_person" onClick="this.select();" value="0"/>\
+					<div class="row">\
+						<div class="col-lg-6">\
+							<div class="form-group">\
+								<label>Money :</label>\
+								<input type="number" class="form-control" name="additionalp_money" id="additionalp_money" onClick="this.select();" value="0" readonly>\
+							</div>\
+						</div>\
+						<div class="col-lg-6">\
+							<div class="form-group">\
+								<label>Note :</label>\
+								<textarea class="form-control" col="4" row="4" id="description" name="description"></textarea>\
+							</div>\
 						</div>\
 					</div>\
-				</div>\
-				<div class="row">\
-					<div class="col-lg-6">\
-						<div class="form-group">\
-							<label>Money :</label>\
-							<input type="number" class="form-control" name="additionalp_money" id="additionalp_money" onClick="this.select();" value="0" readonly>\
+					<div class="row">\
+						<div class="col-lg-1">\
+							<button type="button" class="money-button btn btn-default" amount="1">1</button>\
+						</div>\
+						<div class="col-lg-1">\
+							<button type="button" class="money-button btn btn-default" amount="5">5</button>\
+						</div>\
+						<div class="col-lg-1">\
+							<button type="button" class="money-button btn btn-default" amount="10">10</button>\
+						</div>\
+						<div class="col-lg-1">\
+							<button type="button" class="money-button btn btn-default" amount="20">20</button>\
+						</div>\
+						<div class="col-lg-1">\
+							<button type="button" class="money-button btn btn-default" amount="50">50</button>\
+						</div>\
+						<div class="col-lg-1">\
+							<button type="button" class="money-button btn btn-default" amount="100">100</button>\
+						</div>\
+						<div class="col-lg-6">\
+							<div class="form-group">\
+								<label>Total :</label>\
+								<input class="form-control" name="additionalp_total" id="additionalp_total" value="0" readonly>\
+							</div>\
 						</div>\
 					</div>\
-					<div class="col-lg-6">\
-						<div class="form-group">\
-							<label>Note :</label>\
-							<textarea class="form-control" col="4" row="4" id="description" name="description"></textarea>\
+					<div class="row">\
+						<div class="col-lg-1">\
+							<button type="button" class="money-button btn btn-default" amount="200">200</button>\
+						</div>\
+						<div class="col-lg-1">\
+							<button type="button" class="money-button btn btn-default" amount="500">500</button>\
+						</div>\
+						<div class="col-lg-2">\
+							<button type="button" class="money-button btn btn-default" amount="1000">1000</button>\
+						</div>\
+						<div class="col-lg-2">\
+							<button type="button" class="money-button btn btn-warning" amount="0">Reset</button>\
+						</div>\
+						<div class="col-lg-6">\
+							<div class="form-group">\
+								<label>Change :</label>\
+								<input class="form-control" name="additionalp_change" id="additionalp_change" onClick="this.select();" value="0" readonly>\
+							</div>\
 						</div>\
 					</div>\
-				</div>\
-				<div class="row">\
-					<div class="col-lg-1">\
-						<button type="button" class="money-button btn btn-default" amount="1">1</button>\
-					</div>\
-					<div class="col-lg-1">\
-						<button type="button" class="money-button btn btn-default" amount="5">5</button>\
-					</div>\
-					<div class="col-lg-1">\
-						<button type="button" class="money-button btn btn-default" amount="10">10</button>\
-					</div>\
-					<div class="col-lg-1">\
-						<button type="button" class="money-button btn btn-default" amount="20">20</button>\
-					</div>\
-					<div class="col-lg-1">\
-						<button type="button" class="money-button btn btn-default" amount="50">50</button>\
-					</div>\
-					<div class="col-lg-1">\
-						<button type="button" class="money-button btn btn-default" amount="100">100</button>\
-					</div>\
-					<div class="col-lg-6">\
-						<div class="form-group">\
-							<label>Total :</label>\
-							<input class="form-control" name="additionalp_total" id="additionalp_total" value="0" readonly>\
+					<div class="row">\
+						<div class="col-lg-6">\
+							<div class="form-group">\
+							</div>\
+						</div>\
+						<div class="col-lg-6">\
+							<button type="submit" class="as-button btn btn-success">Submit</button>\
+							<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>\
 						</div>\
 					</div>\
-				</div>\
-				<div class="row">\
-					<div class="col-lg-1">\
-						<button type="button" class="money-button btn btn-default" amount="200">200</button>\
-					</div>\
-					<div class="col-lg-1">\
-						<button type="button" class="money-button btn btn-default" amount="500">500</button>\
-					</div>\
-					<div class="col-lg-2">\
-						<button type="button" class="money-button btn btn-default" amount="1000">1000</button>\
-					</div>\
-					<div class="col-lg-2">\
-						<button type="button" class="money-button btn btn-warning" amount="0">Reset</button>\
-					</div>\
-					<div class="col-lg-6">\
-						<div class="form-group">\
-							<label>Change :</label>\
-							<input class="form-control" name="additionalp_change" id="additionalp_change" onClick="this.select();" value="0" readonly>\
-						</div>\
-					</div>\
-				</div>\
-				<div class="row">\
-					<div class="col-lg-6">\
-						<div class="form-group">\
-						</div>\
-					</div>\
-					<div class="col-lg-6">\
-						<button type="submit" class="as-button btn btn-success">Submit</button>\
-						<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>\
-					</div>\
-				</div>\
-				</form>\
-			';
-			
-			setTimeout(function(){
-				$("body").mLoading("hide");
-				$("#dynamic-modal-title").html('Additional Person for '+room_name);
-				$("#dynamic-modal-body").html(additional_person_form);
-				$("#dynamic-modal-footer").html('');
-				$("#dynamic-modal").modal({show:true});
-			}, 1000);
+					</form>\
+				';
+				
+				setTimeout(function(){
+					$("body").mLoading("hide");
+					$("#dynamic-modal-title").html('Additional Person for '+room_name);
+					$("#dynamic-modal-body").html(additional_person_form);
+					$("#dynamic-modal-footer").html('');
+					$("#dynamic-modal").modal({show:true});
+				}, 1000);
+			}
 		  }
 		  else {//VACANT WITH CHECK IN
 			$.post("<?php echo $this->config->base_url().'dashboard/get_rooms_movies2';?>",{check_in:check_in, room_id:room_id},function(result){
@@ -322,6 +369,15 @@
 							<p>Hour : '+result.hour_select+' Minute : '+result.minute_select+' AM/PM : '+result.am_pm_select+'</p>\
 						</div>\
 					</div>\
+					<div class="row">\
+					<div class="col-lg-6">\
+						<div class="form-group">\
+							<label>Reserve for later?</label><br>\
+							<label class="radio-inline"><input type="radio" name="reserve" id="reserve" value="1">Yes</label>\
+							<label class="radio-inline"><input type="radio" name="reserve" id="reserve" value="0" checked>No</label>\
+						</div>\
+					</div>\
+				</div>\
 				</div>\
 				<div class="row">\
 					<div class="col-lg-6">\
@@ -377,7 +433,7 @@
 						<button type="button" class="money-button1 btn btn-warning" amount="0">Reset</button>\
 					</div>\
 					<div class="col-lg-6">\
-						<button type="submit" class="mrci2-button btn btn-success">Movie Room Check-In</button>\
+						<button type="submit" id = "check-in" class="mrci2-button btn btn-success">Movie Room Check-In</button>\
 						<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>\
 					</div>\
 				</div>\
@@ -392,9 +448,79 @@
 					$("#dynamic-modal-body").html(movie_room_check_in_form2);
 					$("#dynamic-modal-footer").html('');
 					$("#dynamic-modal").modal({show:true});
+					// hide the title RESERVED in the select box to avoid accidental clicking
+					$('#movie option[value="99999|||2:00"]').remove();
 				}, 1000);
 			}, 'json');
 		  }
+		});
+		
+		$('#dynamic-modal-body').on('submit', '#movie_title_select', function(e) {
+			
+			// alert($movie_explode);
+			// return false;
+			e.preventDefault();
+			
+			// var notesx = $("#description").val();
+			// var additional_person = $("#additional_person").val();
+			
+			// if(additional_person<=0 && notesx==''){
+				// alert("Please do input Additional Person or Notes.");
+				// return false;
+			// }
+			
+			// var change = $("#additionalp_change").val();
+			// var movie = $('#movie').val();
+			
+			
+			if(!confirm('Please confirm the selected movie')){
+				return false;
+			}
+			else {
+				var $form = $(e.target);
+			
+				$("#dynamic-modal").modal("hide");
+				$("body").mLoading();
+				
+				// setTimeout(function(){
+					// $("body").mLoading("hide");
+					// $("#dynamic-modal-title").html('Success Message');
+					// $("#dynamic-modal-body").html('<div class="alert alert-success"><strong>Attention!</strong> '+'yes'+'</div>');
+					// $("#dynamic-modal-footer").html('<button type="button" class="btn btn-danger" data-dismiss="modal">Ok</button>');
+					// $("#dynamic-modal").modal({show:true});
+				// }, 1000);
+				// setTimeout(function(){
+					// $("body").mLoading("hide");
+					// window.location.href = "<?php echo $this->config->base_url().'dashboard/monitor';?>";
+				// }, 4000);
+				
+				$.post($form.attr('action'), $form.serialize(), function(result) {
+					if(result.error == 0)
+					{
+						setTimeout(function(){
+							$("body").mLoading("hide");
+							$("#dynamic-modal-title").html('Success Message');
+							$("#dynamic-modal-body").html('<div class="alert alert-success"><strong>Attention!</strong> '+result.message+'</div>');
+							$("#dynamic-modal-footer").html('<button type="button" class="btn btn-danger" data-dismiss="modal">Ok</button>');
+							$("#dynamic-modal").modal({show:true});
+						}, 1000);
+						setTimeout(function(){
+							$("body").mLoading("hide");
+							window.location.href = "<?php echo $this->config->base_url().'dashboard/monitor';?>";
+						}, 4000);
+					}
+					else
+					{
+						setTimeout(function(){
+							$("body").mLoading("hide");
+							$("#dynamic-modal-title").html('Error Message');
+							$("#dynamic-modal-body").html('<div class="alert alert-warning"><strong>Attention!</strong> '+result.message+'</div>');
+							$("#dynamic-modal-footer").html('<button type="button" class="btn btn-danger" data-dismiss="modal">Ok</button>');
+							$("#dynamic-modal").modal({show:true});
+						}, 1000);
+					}
+				}, 'json');
+			}
 		});
 		
 		$('#dynamic-modal-body').on('submit', '#additional_person_form', function(e) {
@@ -453,8 +579,26 @@
 			}
 		});
 		
+		$('#dynamic-modal-body').on('click', '#reserve', function() {
+			var movie = $('#movie');
+			
+			if ($(this).val() == '1') {
+				movie.prop('disabled', true);
+				$("#movie").append('<option value="99999|||2:00" selected>RESERVED</option>');
+				$('#check-in').text('Reserve This Timeslot');
+			}
+			else {
+				$("#movie").val($("#movie option:first").val());
+				movie.prop('disabled', false);
+				$('#check-in').text('Movie Room Check-In');
+			}
+		});
+		
+		
 		$('#dynamic-modal-body').on('submit', '#movie_room_form2', function(e) {
 			e.preventDefault();
+			
+			var movie = $('#movie');
 			
 			var no_of_person = $("#no_of_person").val();
 			
@@ -468,6 +612,11 @@
 			if(change<0){
 				alert("Money must be greater than or equal to Total.");
 				return false;
+			}
+			
+			// if customer reserves a slot in advance
+			if ($("input[name='reserve']:checked").val() == '1') {
+				movie.prop('disabled', false);
 			}
 			
 			if(!confirm('Please confirm the inputted data!')){
