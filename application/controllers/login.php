@@ -12,6 +12,7 @@ class Login extends CI_Controller {
 		
 		$this->load->model('page_setup_model','page_setup');
 		$this->load->model('users_model','users');
+		$this->load->model('movie_room_transactions_model','movie_room_transaction');
 		
 		date_default_timezone_set('Asia/Manila');
 	}
@@ -40,6 +41,7 @@ class Login extends CI_Controller {
 			);
 					
 			$this->session->set_userdata($data);
+			$this->movie_room_transaction->display_records();
 		}else{
 			$result['error'] = 1;
 			$result['message'] = 'Username or/and Password did not match!';

@@ -144,6 +144,11 @@ class Movie_room_transaction extends CI_Controller {
 	public function movie_room_transaction_listing(){
 		// $condition = " AND a.datetime_created BETWEEN '".$_GET['date_from']." 00:00:00' AND '".$_GET['date_to']." 23:59:59' ";
 		$condition = " AND DATE(a.datetime_created) = '".$_GET['date_from']."'";
+		
+		if ($this->session->userdata('role') == 4 AND date('Y-m-d') > $_GET['date_from']) {
+			$condition .= " AND TAGGED = 1"; 
+		}
+		
 		$aColumns = array(	
 						  'a.id',			
 						  'b.name',
@@ -287,7 +292,6 @@ class Movie_room_transaction extends CI_Controller {
 				$sJoin
 				$sWhere
 			";
-			
 			//echo $sQuery1; die();
 			//$rResultTotal = $this->db->query($sQuery1)->row(); 
 			//$iTotal = $rResultTotal->totalcount;
@@ -332,8 +336,11 @@ class Movie_room_transaction extends CI_Controller {
 				else
 					$waTotal = $aRow['total'];
 					
-				$row[] = '';
-				$row[] = $aRow['idx'];
+				if ($this->session->userdata('role') != 4) {
+					$row[] = '';
+					$row[] = $aRow['idx'];				
+				}
+				
 				$row[] = $aRow['room_name'];
 				$row[] = $aRow['movie_name'];
 				$row[] = $aRow['check_in'];
@@ -359,8 +366,12 @@ class Movie_room_transaction extends CI_Controller {
 			$query_total_transactions_in_a_day = mysql_query("SELECT count(id) FROM `movie_room_transactions` WHERE datetime_created LIKE '" . $date . "%'");
 			$result_total_transactions_in_a_day = mysql_fetch_row($query_total_transactions_in_a_day)[0];
 			$row = array();
-			$row[] = '<b>Total:</b>';
-			$row[] = "<b>$result_total_transactions_in_a_day</b>";
+			
+			if ($this->session->userdata('role') != 4) {
+				$row[] = '<b>Total:</b>';
+				$row[] = "<b>$result_total_transactions_in_a_day</b>";
+			}
+			
 			$row[] = '';
 			$row[] = '';
 			$row[] = '';
@@ -376,4 +387,7 @@ class Movie_room_transaction extends CI_Controller {
 		exit();
 	}
 	
+	function run_calculation() {
+		$this->movie_room_transaction->display_records();
+	}
 }

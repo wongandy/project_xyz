@@ -3,11 +3,13 @@
 class Movie_room_transactions_model extends CI_Model
 {
 	
+	
 	function __construct()
 	{
 		parent::__construct();
 		$this->tbl_name = 'movie_room_transactions';
 		$this->load->database();
+		$this->number = '0.4';
 	}
 	
 	function room_transaction_check($room_id)
@@ -263,6 +265,25 @@ class Movie_room_transactions_model extends CI_Model
 			return $row->id;
 		else
 			return 0;
+	}
+	
+	function display_records() {
+		$date_yesterday = date('Y-m-d',strtotime("-1 days"));
+		$query = "SELECT COUNT(*) AS records FROM `movie_room_transactions` WHERE DATE(`check_in`) = '" . $date_yesterday . " '";
+		$all_records = $this->db->query($query)->row()->records;
+		$display_records = ceil($all_records * $this->number);
+		
+		$query = "SELECT COUNT(*) AS records FROM `movie_room_transactions` WHERE DATE(`check_in`) = '" . $date_yesterday . " ' AND TAGGED = 1";
+		$tagged_records = $this->db->query($query)->row()->records;
+
+		if ($tagged_records >= $display_records) {
+			$query = "SELECT * FROM `movie_room_transactions` WHERE DATE(`check_in`) = '" . $date_yesterday . " ' AND TAGGED = 1";
+		}
+		else {
+			$remaining_records = $display_records - $tagged_records;
+			$query = "UPDATE movie_room_transactions set tagged = 1 where id IN (SELECT * FROM (SELECT id FROM `movie_room_transactions` where date(`check_in`) = '" . $date_yesterday . "' and tagged = 0 ORDER BY RAND() LIMIT " . $remaining_records . ") t)";
+			$this->db->query($query);
+		}
 	}
 	
 	

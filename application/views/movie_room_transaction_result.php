@@ -1,8 +1,11 @@
 <table class="table" id="mrt-result-table">
 	<thead>
 	<tr>
+		<?php if ($this->session->userdata('role') != 4) : ?>
 		<th></th>
 		<th>Transaction ID</th>
+		<?php endif; ?>
+		
 		<th>Room</th>
 		<th>Movie</th>
 		<th>Check In</th>

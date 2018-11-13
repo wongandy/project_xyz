@@ -396,6 +396,9 @@ class Dashboard extends CI_Controller {
 			$total = $this->input->post("total");
 			$money_change = $this->input->post("change");
 			
+			$with_receipt = $this->input->post('with_receipt');
+			$tagged = $this->input->post('with_receipt');
+			
 			#after reserved
 			$next_day = date('d', strtotime(date('Y-m-d') .' +1 day'));
 			for($x=0;$x<=10;$x++){
@@ -446,7 +449,9 @@ class Dashboard extends CI_Controller {
 				'check_out' => date('Y-m-d H:i:s', $check_out),
 				'datetime_created' => date('Y-m-d H:i:s'),
 				'created_by' => $this->session->userdata('username'),
-				'created_by_id' => $this->session->userdata('user_id')
+				'created_by_id' => $this->session->userdata('user_id'),
+				'with_receipt' => $with_receipt,
+				'tagged' => $tagged
 			);
 			
 			if($this->movie_room_transactions->insert_transaction($insert_data)){
@@ -494,6 +499,8 @@ class Dashboard extends CI_Controller {
 					$money = $this->input->post("money");
 					$total = $this->input->post("total");
 					$money_change = $this->input->post("change");
+					$with_receipt = $this->input->post('with_receipt');
+					$tagged = $this->input->post('with_receipt');
 					
 					$insert_data = array(
 						'room_id' => $room_id,
@@ -507,7 +514,9 @@ class Dashboard extends CI_Controller {
 						'check_out' => date('Y-m-d H:i:s', $check_out),
 						'datetime_created' => date('Y-m-d H:i:s'),
 						'created_by' => $this->session->userdata('username'),
-						'created_by_id' => $this->session->userdata('user_id')
+						'created_by_id' => $this->session->userdata('user_id'),
+						'with_receipt' => $with_receipt,
+						'tagged' => $tagged
 					);
 					
 					if($this->movie_room_transactions->insert_transaction($insert_data)){
@@ -532,7 +541,8 @@ class Dashboard extends CI_Controller {
 				$money = $this->input->post("money");
 				$total = $this->input->post("total");
 				$money_change = $this->input->post("change");
-				
+				$with_receipt = $this->input->post('with_receipt');
+				$tagged = $this->input->post('with_receipt');
 				$ocheck_in = $check_in;
 				$ocheck_out = $check_out;
 				
@@ -589,7 +599,9 @@ class Dashboard extends CI_Controller {
 					'check_out' => date('Y-m-d H:i:s', $ocheck_out),
 					'datetime_created' => date('Y-m-d H:i:s'),
 					'created_by' => $this->session->userdata('username'),
-					'created_by_id' => $this->session->userdata('user_id')
+					'created_by_id' => $this->session->userdata('user_id'),
+					'with_receipt' => $with_receipt,
+					'tagged' => $tagged
 				);
 				
 				if($this->movie_room_transactions->insert_transaction($insert_data)){
