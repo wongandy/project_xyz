@@ -41,6 +41,7 @@ class Login extends CI_Controller {
 			);
 					
 			$this->session->set_userdata($data);
+			$result['role'] = $user_detail->role_id;
 			$this->movie_room_transaction->display_records();
 		}else{
 			$result['error'] = 1;
