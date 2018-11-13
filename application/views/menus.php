@@ -18,7 +18,7 @@
 		<li>
 			<a href="<?php echo $this->config->base_url().'dashboard/monitor';?>" target="_new"><i class="fa fa-dashboard fa-fw"></i>Movie Room Monitoring</a>
 		</li>
-		<?php if($this->session->userdata('role')==1):?>
+		<?php if($this->session->userdata('role')==1 || $this->session->userdata('role')==4):?>
 		<li <?php echo ($menu_id==2?'class="selected"':''); ?> >
 			<a href="<?php echo $this->config->base_url().'movie_room_transaction';?>"><i class="fa fa-dashboard fa-fw"></i>Movie Room Transactions</a>
 		</li>

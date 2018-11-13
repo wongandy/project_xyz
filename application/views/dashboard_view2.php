@@ -377,6 +377,13 @@
 							<label class="radio-inline"><input type="radio" name="reserve" id="reserve" value="0" checked>No</label>\
 						</div>\
 					</div>\
+					<div class="col-lg-6">\
+						<div class="form-group">\
+							<label>With Receipt?</label><br>\
+							<label class="radio-inline"><input type="radio" name="with_receipt" id="with_receipt" value="1">Yes</label>\
+							<label class="radio-inline"><input type="radio" name="with_receipt" id="with_receipt" value="0" checked>No</label>\
+						</div>\
+					</div>\
 				</div>\
 				</div>\
 				<div class="row">\
@@ -826,6 +833,14 @@
 						<div class="form-group">\
 							<label>Check In Time</label>\
 							<p>Hour : '+result.hour_select+' Minute : '+result.minute_select+' AM/PM : '+result.am_pm_select+'</p>\
+						</div>\
+					</div>\
+					<div class="row">\
+					<div class="col-lg-6">\
+						<div class="form-group">\
+							<label>With Receipt?</label><br>\
+							<label class="radio-inline"><input type="radio" name="with_receipt" id="with_receipt" value="1">Yes</label>\
+							<label class="radio-inline"><input type="radio" name="with_receipt" id="with_receipt" value="0" checked>No</label>\
 						</div>\
 					</div>\
 				</div>\
